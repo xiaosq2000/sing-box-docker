@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  sing-box:
+    env_file: ./.env
+    image: sing-box-${OS}-${ARCH}:${SING_BOX_VERSION}
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args: 
+        OS: ${OS}
+        ARCH: ${ARCH}
+        SING_BOX_VERSION: ${SING_BOX_VERSION}
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+      network: host
+    network_mode: host
+    volumes:
+      - ${CONFIG_FILE}:/sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${CONFIG_FILE}:ro
+    command: "./sing-box -c ${CONFIG_FILE} run"
+    restart: always
