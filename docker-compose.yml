@@ -3,10 +3,10 @@ services:
   sing-box:
     env_file: ./.env
     image: sing-box-${OS}-${ARCH}:${SING_BOX_VERSION}
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
-      args: 
+      args:
         OS: ${OS}
         ARCH: ${ARCH}
         SING_BOX_VERSION: ${SING_BOX_VERSION}
@@ -18,3 +18,7 @@ services:
       - ${CONFIG_FILE}:/sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${CONFIG_FILE}:ro
     command: "./sing-box -c ${CONFIG_FILE} run"
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
