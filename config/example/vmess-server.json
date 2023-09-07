@@ -1,0 +1,25 @@
+{
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    },
+    "inbounds": [
+        {
+            "type": "vmess",
+            "tag": "vmess-in",
+            "listen": "0.0.0.0",
+            "listen_port": 18080,
+            "users": [
+                {
+                    "name": "${USER}",
+                    "uuid": "${UUID}",
+                    "alterId": 0
+                }
+            ],
+            "tls": {
+                "enabled": false
+            }
+        }
+    ]
+}

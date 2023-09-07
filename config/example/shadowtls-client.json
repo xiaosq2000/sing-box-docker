@@ -1,0 +1,67 @@
+{
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    },
+    "inbounds": [
+        {
+            "type": "mixed",
+            "listen": "127.0.0.1",
+            "listen_port": 1080,
+            "sniff": true,
+            "set_system_proxy": false
+        }
+    ],
+    "outbounds": [
+        {
+            "type": "shadowsocks",
+            "tag": "ss-out",
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "8JCsPssfgS8tiRwiMlhARg==",
+            "multiplex": {
+                "enabled": true,
+                "max_connections": 4,
+                "min_streams": 4
+            },
+            "detour": "st-out"
+        },
+        {
+            "type": "shadowtls",
+            "tag": "st-out",
+            "server": "${SERVER_IP}",
+            "server_port": ${SERVER_PORT},
+            "version": 3,
+            "password": "${PASSWORD}",
+            "tls": {
+                "enabled": true,
+                "server_name": "aws.amazon.com",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            }
+        },
+        {
+            "type": "direct",
+            "tag": "direct"
+        },
+        {
+            "type": "block",
+            "tag": "block"
+        }
+    ],
+    "route": {
+        "rules": [
+            {
+                "geosite": "category-ads-all",
+                "outbound": "block"
+            },
+            {
+                "geosite": "cn",
+                "geoip": "cn",
+                "outbound": "direct"
+            }
+        ]
+    }
+}

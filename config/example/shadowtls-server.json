@@ -1,0 +1,33 @@
+{
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    },
+    "inbounds": [
+        {
+            "type": "shadowtls",
+            "listen": "0.0.0.0",
+            "listen_port": 443,
+            "version": 3,
+            "users": [
+                {
+                    "name": "${NAME}",
+                    "password": "${PASSWORD}"
+                }
+            ],
+            "handshake": {
+                "server": "aws.amazon.com",
+                "server_port": 443
+            },
+            "strict_mode": false,
+            "detour": "ss-in"
+        },
+        {
+            "type": "shadowsocks",
+            "tag": "ss-in",
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "8JCsPssfgS8tiRwiMlhARg=="
+        }
+    ]
+}
