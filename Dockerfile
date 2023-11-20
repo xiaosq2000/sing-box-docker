@@ -21,11 +21,9 @@ RUN wget -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} \
     rm sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}.tar.gz 
 WORKDIR /sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}
 RUN wget -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} \
-    https://github.com/SagerNet/sing-geoip/releases/download/20230812/geoip.db && \
+    https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db && \
     wget -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} \
-    https://github.com/SagerNet/sing-geoip/releases/download/20230812/geoip-cn.db && \
-    wget -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} \
-    https://github.com/SagerNet/sing-geosite/releases/download/20230807051510/geosite.db
+    https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db
 
 ARG OS
 ARG ARCH
