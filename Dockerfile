@@ -1,35 +1,19 @@
-# TODO: build from source
-ARG OS
-ARG ARCH
-FROM --platform=${OS}/${ARCH} ubuntu:22.04 AS base
-RUN http_proxy=${http_proxy} \
-    https_proxy=${https_proxy} \
-    HTTP_PROXY=${HTTP_PROXY} \
-    HTTPS_PROXY=${HTTPS_PROXY} \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends \
-    wget \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-WORKDIR /sing-box
-ARG OS
-ARG ARCH
-ARG SING_BOX_VERSION
-RUN wget -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} \
-    https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}.tar.gz && \
-    tar -zxf sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}.tar.gz && \
-    rm sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}.tar.gz 
-WORKDIR /sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}
-RUN wget -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} \
-    https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db && \
-    wget -e http_proxy=${http_proxy} -e https_proxy=${https_proxy} \
-    https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db
-
 ARG OS
 ARG ARCH
 FROM --platform=${OS}/${ARCH} alpine:3.18.3
 ARG OS
 ARG ARCH
 ARG SING_BOX_VERSION
-COPY --from=base /sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH} /sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}
+RUN http_proxy=${http_proxy} \
+    https_proxy=${https_proxy} \
+    apk upgrade --update-cache --available && \
+    apk --no-cache add \
+    curl openssl && \
+    wget -O -  https://get.acme.sh | sh && \
+    wget https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}.tar.gz && \
+    tar -zxf sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}.tar.gz && \
+    rm sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}.tar.gz && \
+    cd sing-box-${SING_BOX_VERSION}-${OS}-${ARCH} && \
+    wget https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db && \
+    wget https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db
 WORKDIR /sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}
