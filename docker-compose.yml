@@ -15,7 +15,7 @@ services:
       network: host
     network_mode: host
     volumes:
-      - ${CONFIG_FILE}:/sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${CONFIG_FILE}:ro
+      - ${CONFIG_FILE}:/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${CONFIG_FILE}:ro
     command: "./sing-box -c ${CONFIG_FILE} run"
     restart: always
     logging:
