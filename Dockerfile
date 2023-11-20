@@ -16,4 +16,4 @@ RUN http_proxy=${http_proxy} \
     cd sing-box-${SING_BOX_VERSION}-${OS}-${ARCH} && \
     wget https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db && \
     wget https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db
-WORKDIR /sing-box/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}
+WORKDIR /sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}
