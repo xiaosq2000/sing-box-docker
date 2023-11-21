@@ -1,6 +1,7 @@
 version: "3.8"
 services:
-  sing-box:
+  sing-box-client:
+    container: sing-box-client
     env_file: ./.env
     image: sing-box-${OS}-${ARCH}:${SING_BOX_VERSION}
     build:
@@ -15,8 +16,31 @@ services:
       network: host
     network_mode: host
     volumes:
-      - ${CONFIG_FILE}:/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${CONFIG_FILE}:ro
-    command: "./sing-box -c ${CONFIG_FILE} run"
+      - ${CLIENT_CONFIG_FILE}:/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${CLIENT_CONFIG_FILE}:ro
+    command: "./sing-box -c ${CLIENT_CONFIG_FILE} run"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+  sing-box-server:
+    container: sing-box-server
+    env_file: ./.env
+    image: sing-box-${OS}-${ARCH}:${SING_BOX_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        OS: ${OS}
+        ARCH: ${ARCH}
+        SING_BOX_VERSION: ${SING_BOX_VERSION}
+      network: host
+    network_mode: host
+    volumes:
+      - ${SERVER_CONFIG_FILE}:/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${SERVER_CONFIG_FILE}:ro
+      - ${SSL_KEY}:${SSL_KEY}:ro
+      - ${SSL_CERT}:${SSL_CERT}:ro
+    command: "./sing-box -c ${SERVER_CONFIG_FILE} run"
     restart: always
     logging:
       driver: "json-file"
