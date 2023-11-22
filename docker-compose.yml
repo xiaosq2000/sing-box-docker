@@ -1,8 +1,8 @@
 version: "3.8"
 services:
-  sing-box-client:
-    container_name: sing-box-client
+  client:
     env_file: ./.env
+    container_name: sing-box-client
     image: sing-box-${OS}-${ARCH}:${SING_BOX_VERSION}
     build:
       context: .
@@ -16,16 +16,16 @@ services:
       network: host
     network_mode: host
     volumes:
-      - ${CLIENT_CONFIG_FILE}:/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${CLIENT_CONFIG_FILE}:ro
-    command: "./sing-box -c ${CLIENT_CONFIG_FILE} run"
+      - ${CLIENT_CONFIG}:/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${CLIENT_CONFIG}:ro
+    command: "./sing-box -c ${CLIENT_CONFIG} run"
     restart: always
     logging:
       driver: "json-file"
       options:
         max-size: "50m"
-  sing-box-server:
-    container_name: sing-box-server
+  server:
     env_file: ./.env
+    container_name: sing-box-server
     image: sing-box-${OS}-${ARCH}:${SING_BOX_VERSION}
     build:
       context: .
@@ -37,10 +37,10 @@ services:
       network: host
     network_mode: host
     volumes:
-      - ${SERVER_CONFIG_FILE}:/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${SERVER_CONFIG_FILE}:ro
-      - ${SSL_KEY_FILE}:${SSL_KEY_FILE}:ro
-      - ${SSL_CERT_FILE}:${SSL_CERT_FILE}:ro
-    command: "./sing-box -c ${SERVER_CONFIG_FILE} run"
+      - ${SERVER_CONFIG}:/sing-box-${SING_BOX_VERSION}-${OS}-${ARCH}/${SERVER_CONFIG}:ro
+      - ${SSL_CERT}:${SSL_CERT}:ro
+      - ${SSL_CERT_KEY}:${SSL_CERT_KEY}:ro
+    command: "./sing-box -c ${SERVER_CONFIG} run"
     restart: always
     logging:
       driver: "json-file"
