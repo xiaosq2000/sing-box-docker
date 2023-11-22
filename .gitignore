@@ -1,2 +1,1 @@
-config/*
-!config/example/*.json
+config/sing-box-config
