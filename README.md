@@ -2,48 +2,30 @@
 
 A dockerized [sing-box](https://github.com/SagerNet/sing-box) (by [nekohasekai](https://github.com/nekohasekai)) for personal use. 
 
-```bash
-# working tree
-.
-├── config
-│   └── *.json
-├── docker-compose.yml
-├── Dockerfile
-├── .dockerignore
-├── .env
-├── .gitignore
-├── LICENSE
-└── README.md
-
-1 directory, 8 files
-
-```
-
-## Quick Start
+## Quick start (for linux clients)
 
 ### 0. Requirements
 
 [Docker Engine](https://docs.docker.com/engine/) and [Docker Compose](https://docs.docker.com/compose/)
 
-### 1. Get `.env` and `*.json` files ready
+### 1. Configure
 
-`.env` is loaded by `docker-compose.yml` for both building images and running containers.
+There are two configuration files.
 
-Here is an example.
+#### `*.json` for sing-box
 
-```bash
-OS=linux
-ARCH=amd64
-SING_BOX_VERSION=1.4.0
-http_proxy=http://127.0.0.1:1080 # optional, only for building
-https_proxy=https://127.0.0.1:1080 # optional, only for building
-CONFIG_FILE=./config/vmess-client.json
-```
+Make sure that you receive a correct configuration file from your service provider.
 
-`*.json` is the configuration file for sing-box ([offical reference](https://sing-box.sagernet.org/configuration/)). 
+For details, check out the ([offical reference](https://sing-box.sagernet.org/configuration/)).
 
-### 2. Start
+#### `.env` for Docker
+
+Modify the value of `CLIENT_CONFIG` to the path of your `*.json`.
+
+### 2. Run
 
 ```bash
-docker compose up -d
+docker compose up -d client
 ```
+
+Executing it once is sufficient. No need to worry about rebooting.
