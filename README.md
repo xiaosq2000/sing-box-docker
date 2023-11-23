@@ -25,7 +25,12 @@ Modify the value of `CLIENT_CONFIG` to the path of your `*.json`.
 ### 2. Run
 
 ```bash
-docker compose up -d client
+docker compose up -d ${PROTOCOL}-client
 ```
 
 Executing it once is sufficient. No need to worry about rebooting.
+
+## TODO
+
+1. Build sing-box from source
+2. `set_system_proxy`
