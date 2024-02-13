@@ -12,14 +12,14 @@ os.chdir(root_dir)
 
 env_file = os.path.join(root_dir, '.env')
 env = dotenv.dotenv_values(env_file)
-
+print('Load', env_file)
 release_name = 'sing-box-v' + str(env.get('SING_BOX_VERSION'))
 timestamp = date.today().strftime("%Y%m%d")
 release_name = release_name + '-' + timestamp
 release_dir = os.path.join(root_dir, 'releases', release_name)
-
+print('Create directory', release_dir)
 os.makedirs(release_dir, exist_ok=True)
-
+print('Download prebuilt binaries from SagerNet/sing-box on Github.')
 prebuilt_binary_urls = [
     'https://github.com/SagerNet/sing-box/releases/download/v' + str(
         env.get('SING_BOX_VERSION')) + '/sing-box-' + str(
@@ -38,7 +38,6 @@ for url in prebuilt_binary_urls:
     if os.path.exists(prebuilt_binary_file_path) == False:
         wget.download(url, out=prebuilt_binary_file_path)
 
-server_config_path = os.path.abspath(str(env.get('TROJAN_SERVER_CONFIG')))
 client_config_path = os.path.abspath(str(env.get('TROJAN_CLIENT_CONFIG')))
 client_tun_config_path = os.path.abspath(
     str(env.get('TROJAN_TUN_CLIENT_CONFIG')))
@@ -49,6 +48,9 @@ user_release_dirs = []
 linux_amd64_dirs = []
 windows_amd64_dirs = []
 android_arm64_dirs = []
+
+print('Read and parse the server configuration.')
+server_config_path = os.path.abspath(str(env.get('TROJAN_SERVER_CONFIG')))
 with open(server_config_path, 'r') as server_config_file:
     users = json.loads(server_config_file.read())["inbounds"][0]["users"]
     for user in users:
@@ -67,17 +69,20 @@ with open(server_config_path, 'r') as server_config_file:
         android_arm64_dirs.append(
             os.path.join(
                 user_release_dir,
-               'android-arm64'))
+                'android-arm64'))
 
 user_num = len(usernames)
-
+print('There are', user_num, 'users in total.')
+print('Create a directory for each user.')
+print('Create a sub-directory for each platform and get the executables ready.')
 for i in range(0, user_num):
     os.makedirs(linux_amd64_dirs[i], exist_ok=True)
     subprocess.run(['tar', '-xf', prebuilt_binary_file_paths[0], '-C',
                    linux_amd64_dirs[i], '--strip-components=1'])
 
     os.makedirs(windows_amd64_dirs[i], exist_ok=True)
-    subprocess.run(['unzip', '-qoj', '-d', windows_amd64_dirs[i], prebuilt_binary_file_paths[1]])
+    subprocess.run(['unzip', '-qoj', '-d', windows_amd64_dirs[i],
+                   prebuilt_binary_file_paths[1]])
 
     os.makedirs(android_arm64_dirs[i], exist_ok=True)
     shutil.copy(prebuilt_binary_file_paths[2], android_arm64_dirs[i])
@@ -99,6 +104,7 @@ for i in range(0, user_num):
             android_arm64_dirs[i],
             os.path.basename(client_tun_config_path)))
 
+print('Generate client configuration for each user and each platform.')
 with open(file=client_config_path, mode='r') as client_config_file:
     client_config = json.loads(client_config_file.read())
     for i in range(0, user_num):
@@ -116,6 +122,12 @@ with open(file=client_tun_config_path, mode='r') as client_tun_config_file:
         with open(file=android_arm64_config_paths[i], mode='w') as android_arm64_config_file:
             json.dump(client_tun_config, android_arm64_config_file, indent=4)
 
+print('Compress by gzip.')
 for i in range(0, user_num):
     os.chdir(os.path.dirname(user_release_dirs[i]))
-    subprocess.run((['tar', '-czf', os.path.basename(user_release_dirs[i]) + '.tar.gz', os.path.basename(user_release_dirs[i])]))
+    subprocess.run((['tar', '-czf', os.path.basename(user_release_dirs[i]
+                                                     ) + '.tar.gz', os.path.basename(user_release_dirs[i])]))
+
+print('Done.')
+
+
