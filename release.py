@@ -47,6 +47,7 @@ for official_release in official_releases:
     print(official_release['platform'], ': ', sep='')
     if not os.path.exists(official_release['path']):
         wget.download(official_release['url'], out=official_release['path'])
+        print()
     else:
         print('\talready exists.')
 
@@ -66,8 +67,6 @@ for i, user in enumerate(users):
     for official_release in official_releases:
         dir = os.path.join(user_dir, official_release['platform'])
         os.makedirs(dir, exist_ok=True)
-        if os.listdir():
-            continue
         if official_release['platform'] == 'linux-amd64':
             subprocess.run(['tar', 'xf', official_release['path'],
                            '-C', dir, '--strip-components=1'])
@@ -84,41 +83,50 @@ print('Prepare configuration files for each user.')
 for official_release in official_releases:
     if official_release['platform'] == 'linux-amd64':
         print('\t', official_release['platform'])
-        with open(file=client_config_path, mode='r') as template_client_config_file:
-            template_client_config = json.loads(
-                template_client_config_file.read())
+        with open(file=client_config_path, mode='r') as client_config_file:
+            client_config = json.loads(
+                client_config_file.read())
             for i, user in enumerate(users):
                 print('\t\tUser', i+1, end=', ')
-                template_client_config["inbounds"][0]["set_system_proxy"] = True
-                template_client_config["outbounds"][0]["password"] = user['password']
-                with open(file=official_release['path'], mode='w') as client_config_file:
-                    json.dump(template_client_config,
-                              client_config_file, indent=4)
+                client_config["inbounds"][0]["set_system_proxy"] = True
+                client_config["outbounds"][0]["password"] = user['password']
+                user_dir = os.path.join(release_dir, os.path.basename(
+                    release_dir) + '-' + str(user['name']))
+                user_client_config_path = os.path.join(user_dir, official_release['platform'], os.path.basename(client_config_path))
+                with open(file=user_client_config_path, mode='w') as user_client_config_file:
+                    json.dump(client_config,
+                              user_client_config_file, indent=4)
                 print('Done.')
     elif official_release['platform'] == 'windows-amd64':
         print('\t', official_release['platform'])
-        with open(file=client_config_path, mode='r') as template_client_config_file:
-            template_client_config = json.loads(
-                template_client_config_file.read())
+        with open(file=client_config_path, mode='r') as client_config_file:
+            client_config = json.loads(
+                client_config_file.read())
             for i, user in enumerate(users):
                 print('\t\tUser', i+1, end=', ')
-                template_client_config["inbounds"][0]["set_system_proxy"] = True
-                template_client_config["outbounds"][0]["password"] = user['password']
-                with open(file=official_release['path'], mode='w') as client_config_file:
-                    json.dump(template_client_config,
-                              client_config_file, indent=4)
+                client_config["inbounds"][0]["set_system_proxy"] = True
+                client_config["outbounds"][0]["password"] = user['password']
+                user_dir = os.path.join(release_dir, os.path.basename(
+                    release_dir) + '-' + str(user['name']))
+                user_client_config_path = os.path.join(user_dir, official_release['platform'], os.path.basename(client_config_path))
+                with open(file=user_client_config_path, mode='w') as user_client_config_file:
+                    json.dump(client_config,
+                              user_client_config_file, indent=4)
                 print('Done.')
     elif official_release['platform'] == 'android-arm64':
         print('\t', official_release['platform'])
-        with open(file=client_tun_config_path, mode='r') as template_client_config_file:
-            template_client_config = json.loads(
-                template_client_config_file.read())
+        with open(file=client_tun_config_path, mode='r') as client_config_file:
+            client_config = json.loads(
+                client_config_file.read())
             for i, user in enumerate(users):
                 print('\t\tUser', i+1, end=', ')
-                template_client_config["outbounds"][0]["password"] = user['password']
-                with open(file=official_release['path'], mode='w') as client_config_file:
-                    json.dump(template_client_config,
-                              client_config_file, indent=4)
+                client_config["outbounds"][0]["password"] = user['password']
+                user_dir = os.path.join(release_dir, os.path.basename(
+                    release_dir) + '-' + str(user['name']))
+                user_client_config_path = os.path.join(user_dir, official_release['platform'], os.path.basename(client_tun_config_path))
+                with open(file=user_client_config_path, mode='w') as user_client_config_file:
+                    json.dump(client_config,
+                              user_client_config_file, indent=4)
                 print('Done.')
     else:
         sys.exit(1)
@@ -134,3 +142,4 @@ for i, user in enumerate(users):
     print('Done.')
 
 print('Done.')
+subprocess.run(['tree', release_dir])
