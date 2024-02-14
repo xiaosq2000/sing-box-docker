@@ -1,133 +1,136 @@
 #!/usr/bin/env python3
 import os
+import sys
 import json
 import dotenv
 import wget
-from datetime import date
 import shutil
 import subprocess
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(root_dir)
-
 env_file = os.path.join(root_dir, '.env')
-env = dotenv.dotenv_values(env_file)
-print('Load', env_file)
-release_name = 'sing-box-v' + str(env.get('SING_BOX_VERSION'))
-timestamp = date.today().strftime("%Y%m%d")
-release_name = release_name + '-' + timestamp
-release_dir = os.path.join(root_dir, 'releases', release_name)
-print('Create directory', release_dir)
-os.makedirs(release_dir, exist_ok=True)
-print('Download prebuilt binaries from SagerNet/sing-box on Github.')
-prebuilt_binary_urls = [
-    'https://github.com/SagerNet/sing-box/releases/download/v' + str(
-        env.get('SING_BOX_VERSION')) + '/sing-box-' + str(
-        env.get('SING_BOX_VERSION')) + '-linux-amd64.tar.gz', 'https://github.com/SagerNet/sing-box/releases/download/v' + str(
-            env.get('SING_BOX_VERSION')) + '/sing-box-' + str(
-                env.get('SING_BOX_VERSION')) + '-windows-amd64.zip',
-    'https://github.com/SagerNet/sing-box/releases/download/v' +
-    str(env.get('SING_BOX_VERSION')) + '/SFA-' +
-    str(env.get('SING_BOX_VERSION')) + '-universal.apk'
-]
-prebuilt_binary_file_paths = []
-for url in prebuilt_binary_urls:
-    prebuilt_binary_file_path = os.path.join(
-        release_dir, os.path.basename(url))
-    prebuilt_binary_file_paths.append(prebuilt_binary_file_path)
-    if os.path.exists(prebuilt_binary_file_path) == False:
-        wget.download(url, out=prebuilt_binary_file_path)
 
+if os.path.exists(env_file):
+    env = dotenv.dotenv_values(env_file)
+else:
+    print("`.env' does not exist", file=sys.stderr)
+    sys.exit(1)
+
+sing_box_version = str(env.get('SING_BOX_VERSION'))
+config_git_repo = str(env.get('CONFIG_GIT_REPO'))
+config_git_hash = str(env.get('CONFIG_GIT_HASH'))
+if os.path.exists(config_git_repo):
+    os.chdir(config_git_repo)
+    subprocess.run(['git', 'reset', '--hard'])
+    subprocess.run(['git', 'checkout', config_git_hash])
+    os.chdir(root_dir)
+
+server_config_path = os.path.abspath(str(env.get('TROJAN_SERVER_CONFIG')))
 client_config_path = os.path.abspath(str(env.get('TROJAN_CLIENT_CONFIG')))
 client_tun_config_path = os.path.abspath(
     str(env.get('TROJAN_TUN_CLIENT_CONFIG')))
 
-usernames = []
-passwords = []
-user_release_dirs = []
-linux_amd64_dirs = []
-windows_amd64_dirs = []
-android_arm64_dirs = []
+release_dir = os.path.join(
+    root_dir, 'releases', 'sing-box-v' + sing_box_version + '-' + config_git_hash)
+os.makedirs(release_dir, exist_ok=True)
 
-print('Read and parse the server configuration.')
-server_config_path = os.path.abspath(str(env.get('TROJAN_SERVER_CONFIG')))
+official_releases = [{'platform': 'linux-amd64', 'url': 'https://github.com/SagerNet/sing-box/releases/download/v' + sing_box_version + '/sing-box-' + sing_box_version + '-linux-amd64.tar.gz', 'path': ''},
+                     {'platform': 'windows-amd64', 'url': 'https://github.com/SagerNet/sing-box/releases/download/v' + sing_box_version + '/sing-box-' + sing_box_version + '-windows-amd64.zip', 'path': ''}, {
+    'platform': 'android-arm64', 'url': 'https://github.com/SagerNet/sing-box/releases/download/v' + sing_box_version + '/SFA-' + sing_box_version + '-universal.apk', 'path': ''}
+]
+
+print('Download prebuilt binaries from SagerNet/sing-box on Github.')
+for official_release in official_releases:
+    official_release['path'] = os.path.join(
+        release_dir, os.path.basename(official_release['url']))
+    print(official_release['platform'], ': ', sep='')
+    if not os.path.exists(official_release['path']):
+        wget.download(official_release['url'], out=official_release['path'])
+    else:
+        print('\talready exists.')
+
+print('Parse users information from the server configuration.')
+users = {}
 with open(server_config_path, 'r') as server_config_file:
     users = json.loads(server_config_file.read())["inbounds"][0]["users"]
-    for user in users:
-        usernames.append(user["name"])
-        passwords.append(user["password"])
 
-        user_release_dir = os.path.join(
-            release_dir, release_name + '-' + str(user["name"]))
-        user_release_dirs.append(user_release_dir)
+print('There are', len(users), 'users in total.')
 
-        linux_amd64_dirs.append(os.path.join(user_release_dir, 'linux-amd64'))
-        windows_amd64_dirs.append(
-            os.path.join(
-                user_release_dir,
-                'windows-amd64'))
-        android_arm64_dirs.append(
-            os.path.join(
-                user_release_dir,
-                'android-arm64'))
+print('Prepare execuables among platforms for each user.')
+for i, user in enumerate(users):
+    print('\tUser', i+1, end=', ')
+    user_dir = os.path.join(release_dir, os.path.basename(
+        release_dir) + '-' + str(user['name']))
+    os.makedirs(user_dir, exist_ok=True)
+    for official_release in official_releases:
+        dir = os.path.join(user_dir, official_release['platform'])
+        os.makedirs(dir, exist_ok=True)
+        if os.listdir():
+            continue
+        if official_release['platform'] == 'linux-amd64':
+            subprocess.run(['tar', 'xf', official_release['path'],
+                           '-C', dir, '--strip-components=1'])
+        elif official_release['platform'] == 'windows-amd64':
+            subprocess.run(['unzip', '-qoj', '-d', dir,
+                           official_release['path']])
+        elif official_release['platform'] == 'android-arm64':
+            shutil.copy(official_release['path'], dir)
+        else:
+            sys.exit(1)
+    print('Done.')
 
-user_num = len(usernames)
-print('There are', user_num, 'users in total.')
-print('Create a directory for each user.')
-print('Create a sub-directory for each platform and get the executables ready.')
-for i in range(0, user_num):
-    os.makedirs(linux_amd64_dirs[i], exist_ok=True)
-    subprocess.run(['tar', '-xf', prebuilt_binary_file_paths[0], '-C',
-                   linux_amd64_dirs[i], '--strip-components=1'])
-
-    os.makedirs(windows_amd64_dirs[i], exist_ok=True)
-    subprocess.run(['unzip', '-qoj', '-d', windows_amd64_dirs[i],
-                   prebuilt_binary_file_paths[1]])
-
-    os.makedirs(android_arm64_dirs[i], exist_ok=True)
-    shutil.copy(prebuilt_binary_file_paths[2], android_arm64_dirs[i])
-
-linux_amd64_config_paths = []
-windows_amd64_config_paths = []
-android_arm64_config_paths = []
-for i in range(0, user_num):
-    linux_amd64_config_paths.append(
-        os.path.join(
-            linux_amd64_dirs[i],
-            os.path.basename(client_config_path)))
-    windows_amd64_config_paths.append(
-        os.path.join(
-            windows_amd64_dirs[i],
-            os.path.basename(client_config_path)))
-    android_arm64_config_paths.append(
-        os.path.join(
-            android_arm64_dirs[i],
-            os.path.basename(client_tun_config_path)))
-
-print('Generate client configuration for each user and each platform.')
-with open(file=client_config_path, mode='r') as client_config_file:
-    client_config = json.loads(client_config_file.read())
-    for i in range(0, user_num):
-        client_config["outbounds"][0]["password"] = passwords[i]
-        client_config["inbounds"][0]["set_system_proxy"] = True
-        with open(file=linux_amd64_config_paths[i], mode='w') as linux_amd64_config_file:
-            json.dump(client_config, linux_amd64_config_file, indent=4)
-        with open(file=windows_amd64_config_paths[i], mode='w') as windows_amd64_config_file:
-            json.dump(client_config, windows_amd64_config_file, indent=4)
-
-with open(file=client_tun_config_path, mode='r') as client_tun_config_file:
-    client_tun_config = json.loads(client_tun_config_file.read())
-    for i in range(0, user_num):
-        client_tun_config["outbounds"][0]["password"] = passwords[i]
-        with open(file=android_arm64_config_paths[i], mode='w') as android_arm64_config_file:
-            json.dump(client_tun_config, android_arm64_config_file, indent=4)
+print('Prepare configuration files for each user.')
+for official_release in official_releases:
+    if official_release['platform'] == 'linux-amd64':
+        print('\t', official_release['platform'])
+        with open(file=client_config_path, mode='r') as template_client_config_file:
+            template_client_config = json.loads(
+                template_client_config_file.read())
+            for i, user in enumerate(users):
+                print('\t\tUser', i+1, end=', ')
+                template_client_config["inbounds"][0]["set_system_proxy"] = True
+                template_client_config["outbounds"][0]["password"] = user['password']
+                with open(file=official_release['path'], mode='w') as client_config_file:
+                    json.dump(template_client_config,
+                              client_config_file, indent=4)
+                print('Done.')
+    elif official_release['platform'] == 'windows-amd64':
+        print('\t', official_release['platform'])
+        with open(file=client_config_path, mode='r') as template_client_config_file:
+            template_client_config = json.loads(
+                template_client_config_file.read())
+            for i, user in enumerate(users):
+                print('\t\tUser', i+1, end=', ')
+                template_client_config["inbounds"][0]["set_system_proxy"] = True
+                template_client_config["outbounds"][0]["password"] = user['password']
+                with open(file=official_release['path'], mode='w') as client_config_file:
+                    json.dump(template_client_config,
+                              client_config_file, indent=4)
+                print('Done.')
+    elif official_release['platform'] == 'android-arm64':
+        print('\t', official_release['platform'])
+        with open(file=client_tun_config_path, mode='r') as template_client_config_file:
+            template_client_config = json.loads(
+                template_client_config_file.read())
+            for i, user in enumerate(users):
+                print('\t\tUser', i+1, end=', ')
+                template_client_config["outbounds"][0]["password"] = user['password']
+                with open(file=official_release['path'], mode='w') as client_config_file:
+                    json.dump(template_client_config,
+                              client_config_file, indent=4)
+                print('Done.')
+    else:
+        sys.exit(1)
 
 print('Compress by gzip.')
-for i in range(0, user_num):
-    os.chdir(os.path.dirname(user_release_dirs[i]))
-    subprocess.run((['tar', '-czf', os.path.basename(user_release_dirs[i]
-                                                     ) + '.tar.gz', os.path.basename(user_release_dirs[i])]))
+for i, user in enumerate(users):
+    print('\tUser', i+1, end=', ')
+    user_dir = os.path.join(release_dir, os.path.basename(
+        release_dir) + '-' + str(user['name']))
+    os.chdir(os.path.dirname(user_dir))
+    subprocess.run((['tar', '-czf', os.path.basename(user_dir
+                                                     ) + '.tar.gz', os.path.basename(user_dir)]))
+    print('Done.')
 
 print('Done.')
-
-
