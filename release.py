@@ -133,15 +133,15 @@ for official_release in official_releases:
     else:
         sys.exit(1)
 
-# print('Compress by gzip.')
-# for i, user in enumerate(users):
-#     print('\tUser', i+1, end=', ')
-#     user_dir = os.path.join(release_dir, os.path.basename(
-#         release_dir) + '-' + str(user['name']))
-#     os.chdir(os.path.dirname(user_dir))
-#     subprocess.run((['tar', '-czf', os.path.basename(user_dir
-#                                                      ) + '.tar.gz', os.path.basename(user_dir)]))
-#     print('Done.')
+print('Compress by gzip.')
+for i, user in enumerate(users):
+    print('\tUser', i+1, end=', ')
+    user_dir = os.path.join(release_dir, os.path.basename(
+        release_dir) + '-' + str(user['name']))
+    os.chdir(os.path.dirname(user_dir))
+    subprocess.run((['tar', '-czf', os.path.basename(user_dir
+                                                     ) + '.tar.gz', os.path.basename(user_dir)]))
+    print('Done.')
 
 server_dir = os.path.join(release_dir, os.path.basename(
     release_dir) + '-' + 'server')
@@ -153,4 +153,4 @@ shutil.copy(os.path.join(root_dir, 'releases', 'sing-box.service'), server_dir)
 shutil.copy(server_config_path, server_dir)
 
 print('Done.')
-# subprocess.run(['tree', release_dir])
+subprocess.run(['tree', release_dir])
