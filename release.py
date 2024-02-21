@@ -88,7 +88,7 @@ for official_release in official_releases:
                 client_config_file.read())
             for i, user in enumerate(users):
                 print('\t\tUser', i+1, end=', ')
-                client_config["inbounds"][0]["set_system_proxy"] = True
+                client_config["inbounds"][0]["set_system_proxy"] = False
                 client_config["outbounds"][0]["password"] = user['password']
                 user_dir = os.path.join(release_dir, os.path.basename(
                     release_dir) + '-' + str(user['name']))
@@ -96,6 +96,8 @@ for official_release in official_releases:
                 with open(file=user_client_config_path, mode='w') as user_client_config_file:
                     json.dump(client_config,
                               user_client_config_file, indent=4)
+                shutil.copy(os.path.join(root_dir, 'releases', 'install.sh'), os.path.join(user_dir, official_release['platform']))
+                shutil.copy(os.path.join(root_dir, 'releases', 'sing-box.service'), os.path.join(user_dir, official_release['platform']))
                 print('Done.')
     elif official_release['platform'] == 'windows-amd64':
         print('\t', official_release['platform'])
