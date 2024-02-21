@@ -96,7 +96,7 @@ for official_release in official_releases:
                 with open(file=user_client_config_path, mode='w') as user_client_config_file:
                     json.dump(client_config,
                               user_client_config_file, indent=4)
-                shutil.copy(os.path.join(root_dir, 'releases', 'install.sh'), os.path.join(user_dir, official_release['platform']))
+                shutil.copy(os.path.join(root_dir, 'releases', 'install_with_systemd.sh'), os.path.join(user_dir, official_release['platform']))
                 shutil.copy(os.path.join(root_dir, 'releases', 'sing-box.service'), os.path.join(user_dir, official_release['platform']))
                 print('Done.')
     elif official_release['platform'] == 'windows-amd64':
@@ -133,15 +133,24 @@ for official_release in official_releases:
     else:
         sys.exit(1)
 
-print('Compress by gzip.')
-for i, user in enumerate(users):
-    print('\tUser', i+1, end=', ')
-    user_dir = os.path.join(release_dir, os.path.basename(
-        release_dir) + '-' + str(user['name']))
-    os.chdir(os.path.dirname(user_dir))
-    subprocess.run((['tar', '-czf', os.path.basename(user_dir
-                                                     ) + '.tar.gz', os.path.basename(user_dir)]))
-    print('Done.')
+# print('Compress by gzip.')
+# for i, user in enumerate(users):
+#     print('\tUser', i+1, end=', ')
+#     user_dir = os.path.join(release_dir, os.path.basename(
+#         release_dir) + '-' + str(user['name']))
+#     os.chdir(os.path.dirname(user_dir))
+#     subprocess.run((['tar', '-czf', os.path.basename(user_dir
+#                                                      ) + '.tar.gz', os.path.basename(user_dir)]))
+#     print('Done.')
+
+server_dir = os.path.join(release_dir, os.path.basename(
+    release_dir) + '-' + 'server')
+os.makedirs(server_dir, exist_ok=True)
+subprocess.run(['tar', 'xf', official_releases[0].get('path'),
+               '-C', server_dir, '--strip-components=1'])
+shutil.copy(os.path.join(root_dir, 'releases', 'install_with_systemd.sh'), server_dir)
+shutil.copy(os.path.join(root_dir, 'releases', 'sing-box.service'), server_dir)
+shutil.copy(server_config_path, server_dir)
 
 print('Done.')
-subprocess.run(['tree', release_dir])
+# subprocess.run(['tree', release_dir])

@@ -13,12 +13,15 @@ else
     sudo cp sing-box.service /etc/systemd/system/sing-box.service
 fi
 
-sudo mkdir -p /usr/local/bin/ /usr/local/etc/
-
+sudo mkdir -p /usr/local/bin/ 
 sudo cp sing-box /usr/local/bin/sing-box
 
 sudo mkdir -p /usr/local/etc/sing-box
-sudo cp trojan-client.json /usr/local/etc/sing-box/config.json
+if [ -f "trojan-client.json" ]; then
+    sudo cp trojan-client.json /usr/local/etc/sing-box/config.json
+elif [ -f "trojan-server.json" ]; then
+    sudo cp trojan-server.json /usr/local/etc/sing-box/config.json
+fi
 
 sudo mkdir -p /var/lib/sing-box/
 
