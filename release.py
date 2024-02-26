@@ -10,7 +10,6 @@ import subprocess
 root_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(root_dir)
 env_file = os.path.join(root_dir, '.env')
-
 if os.path.exists(env_file):
     env = dotenv.dotenv_values(env_file)
 else:
@@ -20,17 +19,19 @@ else:
 sing_box_version = str(env.get('SING_BOX_VERSION'))
 config_git_repo = str(env.get('CONFIG_GIT_REPO'))
 config_git_hash = str(env.get('CONFIG_GIT_HASH'))
+trojan_server_config = os.path.abspath(str(env.get('TROJAN_SERVER_CONFIG')))
+trojan_client_config = os.path.abspath(str(env.get('TROJAN_CLIENT_CONFIG')))
+trojan_tun_client_config = os.path.abspath(
+    str(env.get('TROJAN_TUN_CLIENT_CONFIG')))
+
 if os.path.exists(config_git_repo):
     os.chdir(config_git_repo)
     subprocess.run(['git', 'reset', '--hard'])
     subprocess.run(['git', 'checkout', config_git_hash])
-    os.chdir(root_dir)
+else:
+    print("CONFIG_GIT_REPO=", config_git_repo," doesn't exist", sep='', file=sys.stderr)
 
-server_config_path = os.path.abspath(str(env.get('TROJAN_SERVER_CONFIG')))
-client_config_path = os.path.abspath(str(env.get('TROJAN_CLIENT_CONFIG')))
-client_tun_config_path = os.path.abspath(
-    str(env.get('TROJAN_TUN_CLIENT_CONFIG')))
-
+os.chdir(root_dir)
 release_dir = os.path.join(
     root_dir, 'releases', 'sing-box-v' + sing_box_version + '-' + config_git_hash)
 os.makedirs(release_dir, exist_ok=True)
@@ -53,14 +54,14 @@ for official_release in official_releases:
 
 print('Parse users information from the server configuration.')
 users = {}
-with open(server_config_path, 'r') as server_config_file:
+with open(trojan_server_config, 'r') as server_config_file:
     users = json.loads(server_config_file.read())["inbounds"][0]["users"]
 
 print('There are', len(users), 'users in total.')
 
 print('Prepare execuables among platforms for each user.')
 for i, user in enumerate(users):
-    print('\tUser', i+1, end=', ')
+    print('\tUser', i + 1, end=', ')
     user_dir = os.path.join(release_dir, os.path.basename(
         release_dir) + '-' + str(user['name']))
     os.makedirs(user_dir, exist_ok=True)
@@ -83,49 +84,68 @@ print('Prepare configuration files for each user.')
 for official_release in official_releases:
     if official_release['platform'] == 'linux-amd64':
         print('\t', official_release['platform'])
-        with open(file=client_config_path, mode='r') as client_config_file:
+        with open(file=trojan_client_config, mode='r') as client_config_file:
             client_config = json.loads(
                 client_config_file.read())
             for i, user in enumerate(users):
-                print('\t\tUser', i+1, end=', ')
+                print('\t\tUser', i + 1, end=', ')
                 client_config["inbounds"][0]["set_system_proxy"] = False
                 client_config["outbounds"][0]["password"] = user['password']
                 user_dir = os.path.join(release_dir, os.path.basename(
                     release_dir) + '-' + str(user['name']))
-                user_client_config_path = os.path.join(user_dir, official_release['platform'], os.path.basename(client_config_path))
+                user_client_config_path = os.path.join(
+                    user_dir, official_release['platform'], os.path.basename(trojan_client_config))
                 with open(file=user_client_config_path, mode='w') as user_client_config_file:
                     json.dump(client_config,
                               user_client_config_file, indent=4)
-                shutil.copy(os.path.join(root_dir, 'releases', 'install_with_systemd.sh'), os.path.join(user_dir, official_release['platform']))
-                shutil.copy(os.path.join(root_dir, 'releases', 'sing-box.service'), os.path.join(user_dir, official_release['platform']))
+                shutil.copy(
+                    os.path.join(
+                        root_dir,
+                        'releases',
+                        'install_with_systemd.sh'),
+                    os.path.join(
+                        user_dir,
+                        official_release['platform']))
+                shutil.copy(
+                    os.path.join(
+                        root_dir,
+                        'releases',
+                        'sing-box.service'),
+                    os.path.join(
+                        user_dir,
+                        official_release['platform']))
                 print('Done.')
     elif official_release['platform'] == 'windows-amd64':
         print('\t', official_release['platform'])
-        with open(file=client_config_path, mode='r') as client_config_file:
+        with open(file=trojan_client_config, mode='r') as client_config_file:
             client_config = json.loads(
                 client_config_file.read())
             for i, user in enumerate(users):
-                print('\t\tUser', i+1, end=', ')
+                print('\t\tUser', i + 1, end=', ')
                 client_config["inbounds"][0]["set_system_proxy"] = True
                 client_config["outbounds"][0]["password"] = user['password']
                 user_dir = os.path.join(release_dir, os.path.basename(
                     release_dir) + '-' + str(user['name']))
-                user_client_config_path = os.path.join(user_dir, official_release['platform'], os.path.basename(client_config_path))
+                user_client_config_path = os.path.join(
+                    user_dir, official_release['platform'], os.path.basename(trojan_client_config))
                 with open(file=user_client_config_path, mode='w') as user_client_config_file:
                     json.dump(client_config,
                               user_client_config_file, indent=4)
                 print('Done.')
     elif official_release['platform'] == 'android-arm64':
         print('\t', official_release['platform'])
-        with open(file=client_tun_config_path, mode='r') as client_config_file:
+        with open(file=trojan_tun_client_config, mode='r') as client_config_file:
             client_config = json.loads(
                 client_config_file.read())
             for i, user in enumerate(users):
-                print('\t\tUser', i+1, end=', ')
+                print('\t\tUser', i + 1, end=', ')
                 client_config["outbounds"][0]["password"] = user['password']
                 user_dir = os.path.join(release_dir, os.path.basename(
                     release_dir) + '-' + str(user['name']))
-                user_client_config_path = os.path.join(user_dir, official_release['platform'], os.path.basename(client_tun_config_path))
+                user_client_config_path = os.path.join(
+                    user_dir,
+                    official_release['platform'],
+                    os.path.basename(trojan_tun_client_config))
                 with open(file=user_client_config_path, mode='w') as user_client_config_file:
                     json.dump(client_config,
                               user_client_config_file, indent=4)
@@ -133,9 +153,9 @@ for official_release in official_releases:
     else:
         sys.exit(1)
 
-print('Compress by gzip.')
+print('Compress user releases by gzip.')
 for i, user in enumerate(users):
-    print('\tUser', i+1, end=', ')
+    print('\tUser', i + 1, end=', ')
     user_dir = os.path.join(release_dir, os.path.basename(
         release_dir) + '-' + str(user['name']))
     os.chdir(os.path.dirname(user_dir))
@@ -143,14 +163,20 @@ for i, user in enumerate(users):
                                                      ) + '.tar.gz', os.path.basename(user_dir)]))
     print('Done.')
 
+print('Release for server.')
 server_dir = os.path.join(release_dir, os.path.basename(
     release_dir) + '-' + 'server')
 os.makedirs(server_dir, exist_ok=True)
-subprocess.run(['tar', 'xf', official_releases[0].get('path'),
-               '-C', server_dir, '--strip-components=1'])
-shutil.copy(os.path.join(root_dir, 'releases', 'install_with_systemd.sh'), server_dir)
+subprocess.run(['tar', 'xf', str(official_releases[0].get('path')),
+               '-C', str(server_dir), '--strip-components=1'])
+shutil.copy(
+    os.path.join(
+        root_dir,
+        'releases',
+        'install_with_systemd.sh'),
+    server_dir)
 shutil.copy(os.path.join(root_dir, 'releases', 'sing-box.service'), server_dir)
-shutil.copy(server_config_path, server_dir)
+shutil.copy(trojan_server_config, server_dir)
 
 print('Done.')
-subprocess.run(['tree', release_dir])
+# subprocess.run(['tree', release_dir])
