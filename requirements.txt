@@ -1,5 +1,2 @@
-autopep8==2.0.4
-pycodestyle==2.11.1
 python-dotenv==1.0.1
-tomli==2.0.1
-wget==3.2
+tqdm==4.66.2
