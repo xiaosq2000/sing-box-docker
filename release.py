@@ -142,7 +142,7 @@ for official_release in official_releases:
         with open(file=trojan_client_config, mode="r") as client_config_file:
             client_config = json.loads(client_config_file.read())
             for i, user in tqdm(enumerate(users)):
-                client_config["inbounds"][0]["set_system_proxy"] = True
+                client_config["inbounds"][0]["set_system_proxy"] = False
                 client_config["outbounds"][0]["password"] = user["password"]
                 user_dir = os.path.join(
                     release_dir, os.path.basename(release_dir) + "-" + str(user["name"])
