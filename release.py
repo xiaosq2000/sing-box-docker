@@ -184,6 +184,10 @@ for official_release in official_releases:
                     file=user_client_config_path, mode="w"
                 ) as user_client_config_file:
                     json.dump(client_config, user_client_config_file, indent=4)
+                shutil.copy(
+                    os.path.join(root_dir, "scripts", "start_proxy.bat"),
+                    os.path.join(user_dir, official_release["platform"]),
+                )
     elif official_release["platform"] == "android-arm64":
         print(official_release["platform"])
         with open(file=trojan_tun_client_config, mode="r") as client_config_file:
