@@ -78,7 +78,8 @@ for official_release in tqdm(official_releases):
                 "wget",
                 official_release["url"],
                 "--no-check-certificate",
-                "-qO",
+                "--no-verbose",
+                "-O",
                 official_release["path"],
             ]
         )
