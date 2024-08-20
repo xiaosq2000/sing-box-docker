@@ -165,6 +165,10 @@ for official_release in official_releases:
                     os.path.join(root_dir, "scripts", "sing-box.service"),
                     os.path.join(user_dir, official_release["platform"]),
                 )
+                shutil.copy(
+                    os.path.join(root_dir, "scripts", "setup.bash"),
+                    os.path.join(user_dir, official_release["platform"]),
+                )
     elif official_release["platform"] == "windows-amd64":
         print(official_release["platform"])
         with open(file=trojan_client_config, mode="r") as client_config_file:
@@ -235,7 +239,6 @@ for filename in os.listdir(official_release_extraction):
 
 shutil.copy(trojan_server_config, server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "install_with_systemd.sh"), server_dir)
-shutil.copy(os.path.join(root_dir, "scripts", "setup.bash"), server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "sing-box.service"), server_dir)
 subprocess.run(
     (
