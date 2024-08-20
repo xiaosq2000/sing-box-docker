@@ -235,6 +235,7 @@ for filename in os.listdir(official_release_extraction):
 
 shutil.copy(trojan_server_config, server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "install_with_systemd.sh"), server_dir)
+shutil.copy(os.path.join(root_dir, "scripts", "setup.bash"), server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "sing-box.service"), server_dir)
 subprocess.run(
     (
@@ -246,5 +247,10 @@ subprocess.run(
         ]
     )
 )
+
+os.chdir(root_dir)
+if os.path.exists(config_git_repo):
+    os.chdir(config_git_repo)
+    subprocess.run(["git", "checkout", "main"])
 
 print("Done.")
