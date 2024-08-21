@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Be safe.
 set -euo pipefail
 
