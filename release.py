@@ -159,7 +159,7 @@ for official_release in official_releases:
                     json.dump(client_config, user_client_config_file, indent=4)
 
                 shutil.copy(
-                    os.path.join(root_dir, "scripts", "install_with_systemd.sh"),
+                    os.path.join(root_dir, "scripts", "install_with_systemd.bash"),
                     os.path.join(user_dir, official_release["platform"]),
                 )
                 shutil.copy(
@@ -239,7 +239,7 @@ for filename in os.listdir(official_release_extraction):
     shutil.copy(os.path.join(official_release_extraction, filename), server_dir)
 
 shutil.copy(trojan_server_config, server_dir)
-shutil.copy(os.path.join(root_dir, "scripts", "install_with_systemd.sh"), server_dir)
+shutil.copy(os.path.join(root_dir, "scripts", "install_with_systemd.bash"), server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "sing-box.service"), server_dir)
 subprocess.run(
     (
