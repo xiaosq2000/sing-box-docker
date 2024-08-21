@@ -1,5 +1,5 @@
 # !/usr/bin/env bash
-print_debug=true
+print_debug=false
 print_verbose=true
 
 INDENT='  '
@@ -32,13 +32,11 @@ debug() {
 }
 
 check_public_ip() {
-    exec 1>/dev/null 2>&1
-    local ipinfo=$(curl ipinfo.io)
-    exec >/dev/tty 2>&1
-    if [[ -z $ipinfo ]]; then
+    local ipinfo=$(curl --silent ipinfo.io)
+    if [[ -z "$ipinfo" ]]; then
         error "No public networking."
     else
-        echo -e "${PURPLE}Public Network:${RESET}\n${INDENT}$(echo "$ipinfo" | grep --color=never -e '\"ip\"' -e '\"city\"' | sed 's/^[ \t]*//' | awk '{print}' ORS=' ')"
+        echo -e "${PURPLE}Public Network:${RESET}\n${INDENT}$(echo $ipinfo | grep --color=never -e '\"ip\"' -e '\"city\"' | sed 's/^[ \t]*//' | awk '{print}' ORS=' ')"
     fi
     echo
 }
@@ -148,29 +146,28 @@ check_proxy_status() {
         info "The shell is ${BOLD}${YELLOW}NOT${RESET} using network proxy.";
     fi
     echo
+    check_public_ip;
     if [[ $print_verbose == "true" ]]; then
-        check_public_ip;
-        echo -e "${CYAN}Environment Variables Related with Network Proxy: ${RESET}"
+        echo "${CYAN}Environment Variables Related with Network Proxy: ${RESET}"
         echo $proxy_env | while read line; do echo "${INDENT}${line}"; done
         echo
         echo "${YELLOW}VPN Client Status: ${RESET}"
         if [[ $(uname -r | grep 'WSL2') ]]; then
             warning "Unknown. For WSL2, the VPN client is probably running on the host machine. Please check manually.";
-        elif [ -f /.dockerenv ]; then
+        elif [[ -f /.dockerenv ]]; then
             warning "Unknown. For a Docker container, the VPN client is probably running on the host machine. Please check manually.";
         else
-            echo "  $(systemctl is-active sing-box.service)"
+            echo "${INDENT}$(systemctl is-active sing-box.service)"
         fi
         echo
     fi
 }
 
-echo "Try with:
+info "Avaiable handy commands:
 
-${INDENT}\$ set_proxy
-${INDENT}\$ unset_proxy
-
-${INDENT}\$ check_public_ip
-${INDENT}\$ check_private_ip
-${INDENT}\$ check_proxy_status
+${INDENT}${GREEN}${BOLD}\$${RESET} set_proxy
+${INDENT}${GREEN}${BOLD}\$${RESET} unset_proxy
+${INDENT}${GREEN}${BOLD}\$${RESET} check_private_ip
+${INDENT}${GREEN}${BOLD}\$${RESET} check_public_ip
+${INDENT}${GREEN}${BOLD}\$${RESET} check_proxy_status
 "

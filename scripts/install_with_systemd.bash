@@ -55,7 +55,7 @@ if [[ -f "${SERVICE_FILE}" ]]; then
 	debug "Stop and disable it."
 	sudo systemctl stop ${SERVICE_NAME} >/dev/null 2>&1
 	sudo systemctl disable ${SERVICE_NAME} >/dev/null 2>&1
-	debug "Replace it with"
+	debug "Replace it with ${SERVICE_NAME} in ${script_dir}."
 	sudo cp "${SERVICE_NAME}" "${SERVICE_FILE}"
 else
 	sudo cp "${SERVICE_NAME}" "${SERVICE_FILE}"
@@ -68,7 +68,7 @@ sudo mkdir -p "/var/lib/sing-box/"
 if [[ -f "sing-box" ]]; then
 	sudo cp ./sing-box "${XDG_PREFIX_DIR}/bin/sing-box"
 else
-	error "Executable binary file not found."
+	error "Executable binary file, sing-box, is not found."
 	exit 1
 fi
 
@@ -85,10 +85,13 @@ sudo systemctl daemon-reload >/dev/null 2>&1
 debug "Systemd Enable now."
 sudo systemctl enable --now ${SERVICE_NAME} >/dev/null 2>&1
 
-info "The networking proxy service, sing-box (${PROTOCOL}), will be managed by systemd from now on.";
-info;
-info "${INDENT}\$ sudo systemctl status ${SERVICE_NAME}";
-info;
-info "Try: ";
-info;
-info "${INDENT}\$ source ${script_dir}/setup.bash";
+info "The networking proxy service, sing-box (${PROTOCOL}), will be managed by systemd from now on.
+
+    Try: 
+
+    ${INDENT}${GREEN}${BOLD}\$${RESET} sudo systemctl status ${SERVICE_NAME}
+
+    To use some handy commands:
+
+    ${INDENT}${GREEN}${BOLD}\$${RESET} source ${script_dir}/setup.bash
+    "
