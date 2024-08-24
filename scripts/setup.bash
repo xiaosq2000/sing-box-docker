@@ -36,7 +36,7 @@ check_public_ip() {
     if [[ -z "$ipinfo" ]]; then
         error "No public networking."
     else
-        echo -e "${PURPLE}Public Network:${RESET}\n${INDENT}$(echo $ipinfo | grep --color=never -e '\"ip\"' -e '\"city\"' | sed 's/^[ \t]*//' | awk '{print}' ORS=' ')"
+        echo -e "${PURPLE}Public Network:${RESET}\n${INDENT}$(echo "$ipinfo" | grep --color=never -e '\"ip\"' -e '\"city\"' | sed 's/^[ \t]*//' | awk '{print}' ORS=' ')"
     fi
     echo
 }
@@ -163,11 +163,12 @@ check_proxy_status() {
     fi
 }
 
-info "Avaiable handy commands:
+printf "${PURPLE}Avaiable handy commands for networking:${RESET}
 
 ${INDENT}${GREEN}${BOLD}\$${RESET} set_proxy
 ${INDENT}${GREEN}${BOLD}\$${RESET} unset_proxy
 ${INDENT}${GREEN}${BOLD}\$${RESET} check_private_ip
 ${INDENT}${GREEN}${BOLD}\$${RESET} check_public_ip
 ${INDENT}${GREEN}${BOLD}\$${RESET} check_proxy_status
+
 "
