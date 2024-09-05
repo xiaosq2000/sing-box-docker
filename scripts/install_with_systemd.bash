@@ -3,42 +3,72 @@
 set -euo pipefail
 
 PROTOCOL="trojan"
-XDG_PREFIX_DIR="/usr/local"
-SERVICE_DIR="/etc/systemd/system"
-SERVICE_NAME="sing-box.service"
-SERVICE_FILE="${SERVICE_DIR}/${SERVICE_NAME}"
 
 # Logging
-INDENT="  "
 print_debug=true
 print_verbose=true
-RESET=$(tput sgr0)
-BOLD=$(tput bold)
-RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
-BLUE=$(tput setaf 4)
-PURPLE=$(tput setaf 5)
-CYAN=$(tput setaf 6)
 
+INDENT='    '
+BOLD="$(tput bold 2>/dev/null || printf '')"
+GREY="$(tput setaf 0 2>/dev/null || printf '')"
+UNDERLINE="$(tput smul 2>/dev/null || printf '')"
+RED="$(tput setaf 1 2>/dev/null || printf '')"
+GREEN="$(tput setaf 2 2>/dev/null || printf '')"
+YELLOW="$(tput setaf 3 2>/dev/null || printf '')"
+BLUE="$(tput setaf 4 2>/dev/null || printf '')"
+MAGENTA="$(tput setaf 5 2>/dev/null || printf '')"
+RESET="$(tput sgr0 2>/dev/null || printf '')"
 error() {
-	printf "${RED}${BOLD}ERROR:${RESET} %s\n\r" "$@" >&2
-	return 1
+	printf '%s\n' "${BOLD}${RED}ERROR:${RESET} $*" >&2
 }
 warning() {
-	printf "${YELLOW}${BOLD}WARNING:${RESET} %s\n\r" "$@" >&2
-	return 1
+	printf '%s\n' "${BOLD}${YELLOW}WARNING:${RESET} $*"
 }
 info() {
-	printf "${GREEN}${BOLD}INFO:${RESET} %s\n\r" "$@"
-	return 0
+	printf '%s\n' "${BOLD}${GREEN}INFO:${RESET} $*"
 }
 debug() {
-	if [[ $print_debug == "true" ]]; then
-		printf "${BOLD}DEBUG:${RESET} %s\n\r" "$@"
-	fi
-	return 0
+	printf '%s\n' "${BOLD}${GREY}DEBUG:${RESET} $*"
 }
+
+usage() {
+    printf "%s\n" \
+        "Usage: " \
+        "${INDENT}$0 [option]" \
+        ""
+    printf "%s\n" \
+        "Options: " \
+        "${INDENT}-h, --help                  Display help messeges" \
+        "${INDENT}-p, --protocol PROTOCOL     Specify which protocol to install" \
+        ""
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    -p | --protocol)
+        PROTOCOL="$2"
+        shift 2
+        ;;
+    *)
+        error "Unknown argument: $1"
+        usage
+        ;;
+    esac
+done
+
+if [[ $PROTOCOL != "trojan" && $PROTOCOL != "hysteria2" ]]; then
+    error "$PROTOCOL is not supported yet."
+    exit 1
+fi
+
+XDG_PREFIX_DIR="/usr/local"
+SERVICE_DIR="/etc/systemd/system"
+SERVICE_NAME="sing-box-${PROTOCOL}.service"
+SERVICE_FILE="${SERVICE_DIR}/${SERVICE_NAME}"
 
 # Superuser privilege is required.
 if [[ $(id -u) -ne 0 ]]; then
@@ -62,7 +92,7 @@ else
 fi
 
 sudo mkdir -p "${XDG_PREFIX_DIR}/bin"
-sudo mkdir -p "${XDG_PREFIX_DIR}/etc/sing-box"
+sudo mkdir -p "${XDG_PREFIX_DIR}/etc/sing-box/${PROTOCOL}"
 sudo mkdir -p "/var/lib/sing-box/"
 
 if [[ -f "sing-box" ]]; then
@@ -73,11 +103,11 @@ else
 fi
 
 if [[ -f "${PROTOCOL}-client.json" ]]; then
-	sudo cp "${PROTOCOL}-client.json" "${XDG_PREFIX_DIR}/etc/sing-box/config.json"
-	debug "Copy ${PROTOCOL}-client.json to ${XDG_PREFIX_DIR}/etc/sing-box/config.json"
+	sudo cp "${PROTOCOL}-client.json" "${XDG_PREFIX_DIR}/etc/sing-box/${PROTOCOL}/config.json"
+	debug "Copy ${PROTOCOL}-client.json to ${XDG_PREFIX_DIR}/etc/sing-box/${PROTOCOL}/config.json"
 elif [[ -f "${PROTOCOL}-server.json" ]]; then
-	sudo cp "${PROTOCOL}-server.json" "${XDG_PREFIX_DIR}/etc/sing-box/config.json"
-	debug "Copy ${PROTOCOL}-server.json to ${XDG_PREFIX_DIR}/etc/sing-box/config.json"
+	sudo cp "${PROTOCOL}-server.json" "${XDG_PREFIX_DIR}/etc/sing-box/${PROTOCOL}/config.json"
+	debug "Copy ${PROTOCOL}-server.json to ${XDG_PREFIX_DIR}/etc/sing-box/${PROTOCOL}/config.json"
 fi
 
 debug "Systemd Daemon reload."

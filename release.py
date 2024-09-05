@@ -22,6 +22,7 @@ config_git_hash = str(env.get("CONFIG_GIT_HASH"))
 trojan_server_config = os.path.abspath(str(env.get("TROJAN_SERVER_CONFIG")))
 hysteria2_server_config = os.path.abspath(str(env.get("HYSTERIA2_SERVER_CONFIG")))
 trojan_client_config = os.path.abspath(str(env.get("TROJAN_CLIENT_CONFIG")))
+hysteria2_client_config = os.path.abspath(str(env.get("HYSTERIA2_CLIENT_CONFIG")))
 trojan_tun_client_config = os.path.abspath(str(env.get("TROJAN_TUN_CLIENT_CONFIG")))
 
 if os.path.exists(config_git_repo):
@@ -120,6 +121,7 @@ for i, user in tqdm(enumerate(users)):
         basename, _ = os.path.splitext(official_release["path"])
         if official_release["platform"] == "linux-amd64":
             official_release_extraction = official_release["path"].rstrip(".tar.gz")
+            print(official_release_extraction)
             for filename in os.listdir(official_release_extraction):
                 shutil.copy(
                     os.path.join(official_release_extraction, filename),
@@ -141,77 +143,101 @@ print("Prepare configuration files for all platforms for each user.")
 for official_release in official_releases:
     if official_release["platform"] == "linux-amd64":
         print(official_release["platform"])
-        with open(file=trojan_client_config, mode="r") as client_config_file:
-            client_config = json.loads(client_config_file.read())
+        with open(file=trojan_client_config, mode="r") as trojan_client_config_file:
+            trojan_client_config_dict = json.loads(trojan_client_config_file.read())
             for i, user in tqdm(enumerate(users)):
-                client_config["inbounds"][0]["set_system_proxy"] = False
-                client_config["outbounds"][0]["password"] = user["password"]
+                trojan_client_config_dict["inbounds"][0]["set_system_proxy"] = False
+                trojan_client_config_dict["outbounds"][0]["password"] = user["password"]
                 user_dir = os.path.join(
                     release_dir, os.path.basename(release_dir) + "-" + str(user["name"])
                 )
-                user_client_config_path = os.path.join(
+                user_trojan_client_config_path = os.path.join(
                     user_dir,
                     official_release["platform"],
                     os.path.basename(trojan_client_config),
                 )
                 with open(
-                    file=user_client_config_path, mode="w"
+                    file=user_trojan_client_config_path, mode="w"
                 ) as user_client_config_file:
-                    json.dump(client_config, user_client_config_file, indent=4)
+                    json.dump(
+                        trojan_client_config_dict, user_client_config_file, indent=4
+                    )
 
                 shutil.copy(
                     os.path.join(root_dir, "scripts", "install_with_systemd.bash"),
                     os.path.join(user_dir, official_release["platform"]),
                 )
                 shutil.copy(
-                    os.path.join(root_dir, "scripts", "sing-box.service"),
+                    os.path.join(root_dir, "scripts", "sing-box-trojan.service"),
+                    os.path.join(user_dir, official_release["platform"]),
+                )
+                shutil.copy(
+                    os.path.join(root_dir, "scripts", "sing-box-hysteria2.service"),
                     os.path.join(user_dir, official_release["platform"]),
                 )
                 shutil.copy(
                     os.path.join(root_dir, "scripts", "setup.bash"),
                     os.path.join(user_dir, official_release["platform"]),
                 )
+
+                if user["name"] == "xiaoshuqi":
+                    user_hysteria2_client_config_path = os.path.join(
+                        user_dir,
+                        official_release["platform"],
+                        os.path.basename(hysteria2_client_config),
+                    )
+                    shutil.copy(
+                        os.path.join(
+                            root_dir, "config", "client", "hysteria2-client.json"
+                        ),
+                        user_hysteria2_client_config_path,
+                    )
+
     elif official_release["platform"] == "windows-amd64":
         print(official_release["platform"])
-        with open(file=trojan_client_config, mode="r") as client_config_file:
-            client_config = json.loads(client_config_file.read())
+        with open(file=trojan_client_config, mode="r") as trojan_client_config_file:
+            trojan_client_config_dict = json.loads(trojan_client_config_file.read())
             for i, user in tqdm(enumerate(users)):
-                client_config["inbounds"][0]["set_system_proxy"] = True
-                client_config["outbounds"][0]["password"] = user["password"]
+                trojan_client_config_dict["inbounds"][0]["set_system_proxy"] = True
+                trojan_client_config_dict["outbounds"][0]["password"] = user["password"]
                 user_dir = os.path.join(
                     release_dir, os.path.basename(release_dir) + "-" + str(user["name"])
                 )
-                user_client_config_path = os.path.join(
+                user_trojan_client_config_path = os.path.join(
                     user_dir,
                     official_release["platform"],
                     os.path.basename(trojan_client_config),
                 )
                 with open(
-                    file=user_client_config_path, mode="w"
+                    file=user_trojan_client_config_path, mode="w"
                 ) as user_client_config_file:
-                    json.dump(client_config, user_client_config_file, indent=4)
+                    json.dump(
+                        trojan_client_config_dict, user_client_config_file, indent=4
+                    )
                 shutil.copy(
                     os.path.join(root_dir, "scripts", "start_proxy.bat"),
                     os.path.join(user_dir, official_release["platform"]),
                 )
     elif official_release["platform"] == "android-arm64":
         print(official_release["platform"])
-        with open(file=trojan_tun_client_config, mode="r") as client_config_file:
-            client_config = json.loads(client_config_file.read())
+        with open(file=trojan_tun_client_config, mode="r") as trojan_client_config_file:
+            trojan_client_config_dict = json.loads(trojan_client_config_file.read())
             for i, user in tqdm(enumerate(users)):
-                client_config["outbounds"][0]["password"] = user["password"]
+                trojan_client_config_dict["outbounds"][0]["password"] = user["password"]
                 user_dir = os.path.join(
                     release_dir, os.path.basename(release_dir) + "-" + str(user["name"])
                 )
-                user_client_config_path = os.path.join(
+                user_trojan_client_config_path = os.path.join(
                     user_dir,
                     official_release["platform"],
                     os.path.basename(trojan_tun_client_config),
                 )
                 with open(
-                    file=user_client_config_path, mode="w"
+                    file=user_trojan_client_config_path, mode="w"
                 ) as user_client_config_file:
-                    json.dump(client_config, user_client_config_file, indent=4)
+                    json.dump(
+                        trojan_client_config_dict, user_client_config_file, indent=4
+                    )
     else:
         sys.exit(1)
 
@@ -242,7 +268,8 @@ for filename in os.listdir(official_release_extraction):
 shutil.copy(hysteria2_server_config, server_dir)
 shutil.copy(trojan_server_config, server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "install_with_systemd.bash"), server_dir)
-shutil.copy(os.path.join(root_dir, "scripts", "sing-box.service"), server_dir)
+shutil.copy(os.path.join(root_dir, "scripts", "sing-box-trojan.service"), server_dir)
+shutil.copy(os.path.join(root_dir, "scripts", "sing-box-hysteria2.service"), server_dir)
 subprocess.run(
     (
         [
