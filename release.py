@@ -20,6 +20,7 @@ sing_box_version = str(env.get("SING_BOX_VERSION"))
 config_git_repo = str(env.get("CONFIG_GIT_REPO"))
 config_git_hash = str(env.get("CONFIG_GIT_HASH"))
 trojan_server_config = os.path.abspath(str(env.get("TROJAN_SERVER_CONFIG")))
+hysteria2_server_config = os.path.abspath(str(env.get("HYSTERIA2_SERVER_CONFIG")))
 trojan_client_config = os.path.abspath(str(env.get("TROJAN_CLIENT_CONFIG")))
 trojan_tun_client_config = os.path.abspath(str(env.get("TROJAN_TUN_CLIENT_CONFIG")))
 
@@ -238,6 +239,7 @@ official_release_extraction = official_releases[0].get("path").rstrip(".tar.gz")
 for filename in os.listdir(official_release_extraction):
     shutil.copy(os.path.join(official_release_extraction, filename), server_dir)
 
+shutil.copy(hysteria2_server_config, server_dir)
 shutil.copy(trojan_server_config, server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "install_with_systemd.bash"), server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "sing-box.service"), server_dir)
