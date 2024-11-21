@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 # Be safe.
-set -euo pipefail;
+set -eo pipefail;
 RESET=$(tput sgr0)
 BOLD=$(tput bold)
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 
-SERVER_HOSTNAME=$1;
+SERVER_HOSTNAME="$1";
 if [[ ! $# -eq 1 ]]; then
     printf "${BOLD}${RED}ERROR: ${RESET}%s\n" "The SSH hostname should be given as an argument."
     exit 1
 fi
+
 # The parent folder of this script.
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 env_file="${script_dir}/../.env"
