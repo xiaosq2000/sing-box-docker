@@ -47,7 +47,7 @@ check_private_ip() {
 set_proxy() {
 	if [[ $(uname -r | grep 'WSL2') ]]; then
 		warning "Make sure the VPN client is working on host."
-		local host="'$(cat /etc/resolv.conf | grep '^nameserver' | cut -d ' ' -f 2)'"
+		local host="'$(ip route show | grep -i default | awk '{ print $3}')'"
 		local port=1080
 	elif [ -f /.dockerenv ]; then
 		warning "It's a docker container. only \"host\" networking mode is supported."

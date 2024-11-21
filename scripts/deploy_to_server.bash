@@ -37,3 +37,4 @@ ssh ${SERVER_HOSTNAME} -t "cd ${RELEASE_DIR}-server/ && sudo ./install_with_syst
 if [[ ! $? -eq 0 ]]; then
     printf "${BOLD}${RED}ERROR: ${RESET}%s\n" "Install with systemd failed."
 fi
+ssh ${SERVER_HOSTNAME} -t "sudo systemctl restart sing-box-trojan.service"
