@@ -3,7 +3,7 @@
 PROTOCOL=trojan
 VERBOSE=false
 
-set -euo pipefail
+# set -euo pipefail
 
 INDENT='    '
 BOLD="$(tput bold 2>/dev/null || printf '')"
@@ -147,7 +147,7 @@ check_proxy_status() {
 	echo
 	check_public_ip
 	if [[ $VERBOSE == "true" ]]; then
-		echo "${CYAN}Environment Variables Related with Network Proxy: ${RESET}"
+		echo "${MAGENTA}Environment Variables Related with Network Proxy: ${RESET}"
 		echo $proxy_env | while read line; do echo "${INDENT}${line}"; done
 		echo
 		echo "${YELLOW}VPN Client Status: ${RESET}"
