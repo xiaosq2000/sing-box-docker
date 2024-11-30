@@ -12,7 +12,6 @@ if [[ ! $# -eq 1 ]]; then
     exit 1
 fi
 
-# The parent folder of this script.
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 env_file="${script_dir}/../.env"
 set -o allexport && source ${env_file} && set +o allexport
