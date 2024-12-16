@@ -161,6 +161,34 @@ get_proxy_config() {
     return 0
 }
 
+has() {
+  command -v "$1" 1>/dev/null 2>&1
+}
+
+check_port_availability() {
+    if [[ -z $1 ]]; then
+        error "An argument, the port number, should be given."
+        return 1;
+    fi
+    if has ufw; then
+        if [[ $(sudo ufw status | head -n 1 | awk '{ print $2;}') == "active" ]]; then
+            info "ufw is active.";
+            if [[ -z $(sudo ufw status | grep "$1") ]]; then
+                warning "port $1 is not specified in the firewall rules and may not be allowed to use.";
+            else
+                sudo ufw status | grep "$1"
+            fi
+        else
+            info "ufw is inactive.";
+        fi
+    fi
+    if [[ -z $(sudo lsof -i:$1) ]]; then
+        info "port $1 is not in use.";
+    else
+        error "port $1 is ${BOLD}unavaiable${RESET}.";
+    fi
+}
+
 # Set proxy configuration
 set_proxy() {
     local proxy_host proxy_port
@@ -404,4 +432,5 @@ echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_private_ip"
 echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_public_ip"
 echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_proxy_status"
 
+# check_port_availability $DEFAULT_PROXY_PORT
 configure_shells
