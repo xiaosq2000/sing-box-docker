@@ -168,6 +168,10 @@ for official_release in official_releases:
                     os.path.join(user_dir, official_release["platform"]),
                 )
                 shutil.copy(
+                    os.path.join(root_dir, "docs", "README_LINUX.md"),
+                    os.path.join(user_dir, official_release["platform"]),
+                )
+                shutil.copy(
                     os.path.join(root_dir, "scripts", "sing-box-trojan.service"),
                     os.path.join(user_dir, official_release["platform"]),
                 )

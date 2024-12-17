@@ -158,9 +158,9 @@ sudo systemctl enable --now ${SERVICE_NAME} >/dev/null 2>&1
 completed "${BOLD}sing-box (${PROTOCOL})${RESET} is successfully installed and managed by systemd from now on."
 
 if [[ "${CONFIGURE_ZSHRC}" == "true" ]]; then
-	sudo -u ${SUDO_USER} bash -c "VERBOSE=${VERBOSE} source $script_dir/setup.bash && network_management_configure_zshrc"
+	sudo -u ${SUDO_USER} bash -c "VERBOSE=${VERBOSE} source $script_dir/setup.sh && network_management_configure_zshrc"
 fi
 
 if [[ "${CONFIGURE_BASHRC}" == "true" ]]; then
-	sudo -u ${SUDO_USER} bash -c "VERBOSE=${VERBOSE} source $script_dir/setup.bash && network_management_configure_bashrc"
+	sudo -u ${SUDO_USER} bash -c "VERBOSE=${VERBOSE} source $script_dir/setup.sh && network_management_configure_bashrc"
 fi
