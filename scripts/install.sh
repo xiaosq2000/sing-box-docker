@@ -31,6 +31,9 @@ completed() {
 	printf '%s\n' "${BOLD}${GREEN}✓${RESET} $*"
 }
 
+DEFAULT_PROTOCOL="trojan"
+SUPPORTED_PROTOCOL="trojan hysteria2"
+
 usage() {
 	printf "%s\n" \
 		"Usage: " \
@@ -43,13 +46,10 @@ usage() {
 		"" \
 		"${INDENT}-p, --protocol PROTOCOL     Specify which protocol to install:" \
 		"                                     ${SUPPORTED_PROTOCOL}" \
-		"${INDENT}--enable-now                " \
+		"${INDENT}--bash                      Configure bashrc" \
+		"${INDENT}--zsh                       Configure zshrc" \
 		""
 }
-
-DEFAULT_PROTOCOL="trojan"
-SUPPORTED_PROTOCOL="trojan hysteria2"
-
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 	-h | --help)
@@ -64,8 +64,12 @@ while [[ $# -gt 0 ]]; do
 		VERBOSE=true
 		shift 1
 		;;
-	--enable-now)
-		ENABLE_NOW=true
+	--zsh)
+		CONFIGURE_ZSHRC=true
+		shift 1
+		;;
+	--bash)
+		CONFIGURE_BASHRC=true
 		shift 1
 		;;
 	*)
@@ -148,24 +152,15 @@ fi
 
 debug "Systemd Daemon Reload."
 sudo systemctl daemon-reload >/dev/null 2>&1
-if [[ "$ENABLE_NOW" == "true" ]]; then
-	debug "Systemd Enable Now."
-	sudo systemctl enable --now ${SERVICE_NAME} >/dev/null 2>&1
+debug "Systemd Enable Now."
+sudo systemctl enable --now ${SERVICE_NAME} >/dev/null 2>&1
+
+completed "${BOLD}sing-box (${PROTOCOL})${RESET} is successfully installed and managed by systemd from now on."
+
+if [[ "${CONFIGURE_ZSHRC}" == "true" ]]; then
+	sudo -u ${SUDO_USER} bash -c "VERBOSE=${VERBOSE} source $script_dir/setup.bash && network_management_configure_zshrc"
 fi
 
-completed "${BOLD}sing-box (${PROTOCOL})${RESET} is successfully installed and managed by systemd from now on.
-
-Try: 
-${INDENT}${GREEN}${BOLD}\$${RESET} sudo systemctl status ${SERVICE_NAME}
-
-To use some handy commands:
-${INDENT}${GREEN}${BOLD}\$${RESET} source ${script_dir}/setup.bash
-${INDENT}${GREEN}${BOLD}\$${RESET} set_proxy
-${INDENT}${GREEN}${BOLD}\$${RESET} unset_proxy
-
-You can add 
-
-${INDENT}source ${script_dir}/setup.bash
-
-into ~/.bashrc.
-"
+if [[ "${CONFIGURE_BASHRC}" == "true" ]]; then
+	sudo -u ${SUDO_USER} bash -c "VERBOSE=${VERBOSE} source $script_dir/setup.bash && network_management_configure_bashrc"
+fi

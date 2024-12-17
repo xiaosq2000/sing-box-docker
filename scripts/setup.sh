@@ -233,7 +233,7 @@ set_proxy() {
 }
 
 # Generic function to configure shell RC files
-configure_shell_rc() {
+network_management_configure_shell_rc() {
     local rc_file="$1"
     local rc_name="$2"
     local translate_prefix="$3"
@@ -339,9 +339,8 @@ check_proxy_status() {
     fi
 }
 
-
 # Generic function to configure shell RC files
-configure_shell_rc() {
+network_management_configure_shell_rc() {
     local rc_file="$1"
     local rc_name="$2"
     local translate_prefix="$3"
@@ -389,26 +388,26 @@ configure_shell_rc() {
 }
 
 # Function to configure bashrc
-configure_bashrc() {
-    configure_shell_rc "${HOME}/.bashrc" "bashrc" "BASHRC"
+network_management_configure_bashrc() {
+    network_management_configure_shell_rc "${HOME}/.bashrc" "bashrc" "BASHRC"
 }
 
 # Function to configure zshrc
-configure_zshrc() {
-    configure_shell_rc "${HOME}/.zshrc" "zshrc" "ZSHRC"
+network_management_configure_zshrc() {
+    network_management_configure_shell_rc "${HOME}/.zshrc" "zshrc" "ZSHRC"
 }
 
 # Function to configure all available shell RC files
-configure_shells() {
+network_management_configure_all_shells() {
     local configured=false
 
     if [[ -f "${HOME}/.bashrc" ]]; then
-        configure_bashrc
+        network_management_configure_bashrc
         configured=true
     fi
 
     if [[ -f "${HOME}/.zshrc" ]]; then
-        configure_zshrc
+        network_management_configure_zshrc
         configured=true
     fi
 
@@ -423,14 +422,18 @@ configure_shells() {
 # Main script initialization
 setup_colors
 INDENT='    '
-
-# Show available commands
-echo "$(translate "Available handy commands for networking proxy")"
-echo "${INDENT}${GREEN}${BOLD}\$${RESET} set_proxy"
-echo "${INDENT}${GREEN}${BOLD}\$${RESET} unset_proxy"
-echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_private_ip"
-echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_public_ip"
-echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_proxy_status"
-
-# check_port_availability $DEFAULT_PROXY_PORT
-configure_shells
+if [[ $VERBOSE == "true" ]]; then
+    # Show available commands
+    echo "$(translate "Available handy commands for networking proxy")"
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} set_proxy"
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} unset_proxy"
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_private_ip"
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_public_ip"
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_proxy_status"
+    echo 
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} network_management_configure_all_shells"
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} network_management_configure_zshrc"
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} network_management_configure_bashrc"
+    echo 
+    echo "${INDENT}${GREEN}${BOLD}\$${RESET} check_port_availability <PORT>"
+fi

@@ -164,7 +164,7 @@ for official_release in official_releases:
                     )
 
                 shutil.copy(
-                    os.path.join(root_dir, "scripts", "install_with_systemd.bash"),
+                    os.path.join(root_dir, "scripts", "install.sh"),
                     os.path.join(user_dir, official_release["platform"]),
                 )
                 shutil.copy(
@@ -176,7 +176,7 @@ for official_release in official_releases:
                     os.path.join(user_dir, official_release["platform"]),
                 )
                 shutil.copy(
-                    os.path.join(root_dir, "scripts", "setup.bash"),
+                    os.path.join(root_dir, "scripts", "setup.sh"),
                     os.path.join(user_dir, official_release["platform"]),
                 )
 
@@ -267,7 +267,7 @@ for filename in os.listdir(official_release_extraction):
 
 shutil.copy(hysteria2_server_config, server_dir)
 shutil.copy(trojan_server_config, server_dir)
-shutil.copy(os.path.join(root_dir, "scripts", "install_with_systemd.bash"), server_dir)
+shutil.copy(os.path.join(root_dir, "scripts", "install.sh"), server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "sing-box-trojan.service"), server_dir)
 shutil.copy(os.path.join(root_dir, "scripts", "sing-box-hysteria2.service"), server_dir)
 subprocess.run(
