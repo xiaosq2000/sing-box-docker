@@ -1,47 +1,149 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>文件列表</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .file-list {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .file-item {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .file-item:last-child {
-            border-bottom: none;
-        }
-        .file-name {
-            font-weight: bold;
-        }
-        .file-download {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .file-download:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="file-list">
-        <h1>文件列表</h1>
-        {% for file in files %}
-        <div class="file-item">
-            <span class="file-name">{{ file.name }}</span>
-            <a class="file-download" href="/files/{{ file.name }}" download>下载</a>
+    <head>
+        <title>List of files</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                margin: 0;
+                min-height: 100vh;
+                padding: 2rem;
+            }
+
+            .file-list {
+                max-width: 800px;
+                margin: 2rem auto;
+                background: rgba(255, 255, 255, 0.95);
+                padding: 2.5rem;
+                border-radius: 15px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                animation: fadeIn 0.5s ease-in-out;
+            }
+
+            .welcome-message {
+                color: white;
+                text-align: center;
+                margin-bottom: 2rem;
+                animation: fadeIn 0.5s ease-in-out;
+            }
+
+            .welcome-message h1 {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+
+            .welcome-message p {
+                font-size: 1.1rem;
+                opacity: 0.9;
+                margin: 0;
+            }
+
+            h1 {
+                text-align: center;
+                margin-bottom: 2rem;
+                color: #333;
+                font-size: 1.8rem;
+                font-weight: 600;
+            }
+
+            .file-item {
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid #e0e0e0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: all 0.3s ease;
+            }
+
+            .file-item:last-child {
+                border-bottom: none;
+            }
+
+            .file-item:hover {
+                background: rgba(102, 126, 234, 0.1);
+                transform: translateX(5px);
+            }
+
+            .file-name {
+                font-weight: 500;
+                color: #333;
+                font-size: 1rem;
+            }
+
+            .file-download {
+                padding: 8px 16px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                font-weight: 500;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+            .file-download:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @media (max-width: 768px) {
+                body {
+                    padding: 1rem;
+                }
+
+                .file-list {
+                    margin: 1rem auto;
+                    padding: 1.5rem;
+                }
+
+                .welcome-message h1 {
+                    font-size: 1.5rem;
+                }
+
+                .welcome-message p {
+                    font-size: 1rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 
+        <div class="welcome-message">
+            <h1>欢迎回来！</h1>
+            <p>您可以在这里查看和下载所有文件</p>
         </div>
-        {% endfor %}
-    </div>
-</body>
+        -->
+        
+        <div class="file-list">
+            <h1>文件列表</h1>
+            {% for file in files %}
+            <div class="file-item">
+                <span class="file-name">{{ file.name }}</span>
+                <a class="file-download" href="/files/{{ file.name }}" download>下载</a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="file-list">
+            <h1>使用方法</h1>
+            <p>Windows 平台：运行 <code>start_proxy.bat</code> 开启 (不是 <code>sing-box.exe</code> )</p>
+            <p>Linux 平台：阅读 <code>README-LINUX.md</code> </p>
+</div>
+    </body>
 </html>
