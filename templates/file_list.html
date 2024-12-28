@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文件列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .file-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .file-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .file-name {
+            font-weight: bold;
+        }
+        .file-download {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .file-download:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="file-list">
+        <h1>文件列表</h1>
+        {% for file in files %}
+        <div class="file-item">
+            <span class="file-name">{{ file.name }}</span>
+            <a class="file-download" href="/files/{{ file.name }}" download>下载</a>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

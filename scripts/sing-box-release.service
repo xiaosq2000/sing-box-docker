@@ -1,0 +1,15 @@
+[Unit]
+Description=Authorization of sing-box Distribution
+After=network.target
+
+[Service]
+User=shuqixiao
+Group=shuqixiao
+WorkingDirectory=/home/shuqixiao/Projects/sing-box-docker
+ExecStart=/bin/bash -c 'source /home/shuqixiao/Projects/sing-box-docker/venv/bin/activate && /home/shuqixiao/Projects/sing-box-docker/venv/bin/python /home/shuqixiao/Projects/sing-box-docker/auth_service.py'
+Restart=always
+RestartSec=10
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

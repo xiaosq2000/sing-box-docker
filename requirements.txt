@@ -1,2 +1,7 @@
-python-dotenv==1.0.1
-tqdm==4.66.2
+python-dotenv
+tqdm
+
+fastapi
+uvicorn
+python-multipart
+jinja2
