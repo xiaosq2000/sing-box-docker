@@ -114,7 +114,7 @@ SERVICE_NAME="sing-box-${PROTOCOL}.service"
 SERVICE_FILE="${SERVICE_DIR}/${SERVICE_NAME}"
 
 set +e
-SERVICE_FILES_TO_REMOVE=$(ls $SERVICE_DIR | grep 'sing-box')
+SERVICE_FILES_TO_REMOVE=$(ls $SERVICE_DIR | grep 'sing-box-${PROTOCOL}')
 if [[ ! -z "${SERVICE_FILES_TO_REMOVE}" ]]; then
 	debug "Detected ${INDENT}${SERVICE_FILES_TO_REMOVE}. Stop, disable and remove."
 	sudo systemctl stop ${SERVICE_FILES_TO_REMOVE} >/dev/null 2>&1
