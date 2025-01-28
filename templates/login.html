@@ -1,16 +1,24 @@
-<!-- Login Page -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Login</title>
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --text-primary: #333;
-            --text-secondary: #555;
-            --border-color: #e0e0e0;
-            --white: #fff;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --base: #faf4ed;
+            --surface: #fffaf3;
+            --overlay: #f2e9e1;
+            --muted: #9893a5;
+            --subtle: #797593;
+            --text: #575279;
+            --love: #b4637a;
+            --gold: #ea9d34;
+            --rose: #d7827e;
+            --pine: #286983;
+            --foam: #56949f;
+            --iris: #907aa9;
+            --highlight-low: #f4ede8;
+            --highlight-med: #dfdad9;
+            --highlight-high: #cecacd;
         }
 
         body {
@@ -20,9 +28,8 @@
             min-height: 100vh;
         }
 
-        /* Login page specific styles */
         body.login-page {
-            background: var(--primary-gradient);
+            background: var(--base);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -30,20 +37,20 @@
         }
 
         .login-box {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--surface);
             padding: 2.5rem;
             border-radius: 15px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 8px 32px rgba(87, 82, 121, 0.1);
             width: 350px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border: 1px solid var(--highlight-med);
             animation: fadeIn 0.5s ease-in-out;
         }
 
         .login-box h2 {
             text-align: center;
             margin-bottom: 2rem;
-            color: var(--text-primary);
+            color: var(--text);
             font-size: 1.8rem;
             font-weight: 600;
         }
@@ -55,7 +62,7 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: var(--text-secondary);
+            color: var(--subtle);
             font-size: 14px;
             font-weight: 500;
         }
@@ -64,24 +71,26 @@
             width: 90%;
             margin: 0 auto;
             padding: 12px 15px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--highlight-med);
             border-radius: 8px;
             font-size: 14px;
             transition: all 0.3s ease;
             display: block;
+            background: var(--surface);
+            color: var(--text);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--foam);
+            box-shadow: 0 0 0 3px rgba(86, 148, 159, 0.1);
         }
 
         .btn-primary {
             width: 300px;
             padding: 12px;
-            background: var(--primary-gradient);
-            color: var(--white);
+            background: var(--pine);
+            color: var(--surface);
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -93,87 +102,20 @@
         }
 
         .btn-primary:hover {
+            background: var(--foam);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(86, 148, 159, 0.2);
         }
 
         .error {
-            color: #ff4757;
+            color: var(--love);
             margin-bottom: 1.2rem;
             text-align: center;
             font-size: 14px;
             padding: 10px;
-            background: rgba(255, 71, 87, 0.1);
+            background: rgba(180, 99, 122, 0.1);
             border-radius: 6px;
-            border: 1px solid rgba(255, 71, 87, 0.2);
-        }
-
-        /* File list page specific styles */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .greeting {
-            background: var(--primary-gradient);
-            color: var(--white);
-            padding: 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-        }
-
-        .greeting h2 {
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        .greeting p {
-            margin: 0.5rem 0 0;
-            opacity: 0.9;
-        }
-
-        .file-list {
-            background: var(--white);
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .file-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .file-item:last-child {
-            border-bottom: none;
-        }
-
-        .file-item:hover {
-            background-color: rgba(102, 126, 234, 0.05);
-        }
-
-        .file-name {
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .file-download {
-            color: #667eea;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .file-download:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateY(-1px);
+            border: 1px solid rgba(180, 99, 122, 0.2);
         }
 
         @keyframes fadeIn {

@@ -3,9 +3,27 @@
     <head>
         <title>List of files</title>
         <style>
+            :root {
+                --base: #faf4ed;
+                --surface: #fffaf3;
+                --overlay: #f2e9e1;
+                --muted: #9893a5;
+                --subtle: #797593;
+                --text: #575279;
+                --love: #b4637a;
+                --gold: #ea9d34;
+                --rose: #d7827e;
+                --pine: #286983;
+                --foam: #56949f;
+                --iris: #907aa9;
+                --highlight-low: #f4ede8;
+                --highlight-med: #dfdad9;
+                --highlight-high: #cecacd;
+            }
+
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--base);
                 margin: 0;
                 min-height: 100vh;
                 padding: 2rem;
@@ -14,17 +32,17 @@
             .file-list {
                 max-width: 800px;
                 margin: 2rem auto;
-                background: rgba(255, 255, 255, 0.95);
+                background: var(--surface);
                 padding: 2.5rem;
                 border-radius: 15px;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 8px 32px rgba(87, 82, 121, 0.1);
                 backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.18);
+                border: 1px solid var(--highlight-med);
                 animation: fadeIn 0.5s ease-in-out;
             }
 
             .welcome-message {
-                color: white;
+                color: var(--text);
                 text-align: center;
                 margin-bottom: 2rem;
                 animation: fadeIn 0.5s ease-in-out;
@@ -45,14 +63,14 @@
             h1 {
                 text-align: center;
                 margin-bottom: 2rem;
-                color: #333;
+                color: var(--text);
                 font-size: 1.8rem;
                 font-weight: 600;
             }
 
             .file-item {
                 padding: 1rem 1.5rem;
-                border-bottom: 1px solid #e0e0e0;
+                border-bottom: 1px solid var(--highlight-med);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -64,20 +82,20 @@
             }
 
             .file-item:hover {
-                background: rgba(102, 126, 234, 0.1);
+                background: var(--highlight-low);
                 transform: translateX(5px);
             }
 
             .file-name {
                 font-weight: 500;
-                color: #333;
+                color: var(--text);
                 font-size: 1rem;
             }
 
             .file-download {
                 padding: 8px 16px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
+                background: var(--pine);
+                color: var(--surface);
                 border: none;
                 border-radius: 8px;
                 cursor: pointer;
@@ -88,8 +106,23 @@
             }
 
             .file-download:hover {
+                background: var(--foam);
                 transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+                box-shadow: 0 5px 15px rgba(86, 148, 159, 0.2);
+            }
+
+            code {
+                background: var(--highlight-low);
+                padding: 0.2em 0.4em;
+                border-radius: 4px;
+                font-family: 'Consolas', 'Monaco', monospace;
+                color: var(--pine);
+            }
+
+            p {
+                color: var(--text);
+                line-height: 1.6;
+                margin: 0.75rem 0;
             }
 
             @keyframes fadeIn {
@@ -142,8 +175,11 @@
         </div>
         <div class="file-list">
             <h1>使用方法</h1>
-            <p>Windows 平台：运行 <code>start_proxy.bat</code> 开启 (不是 <code>sing-box.exe</code> )</p>
-            <p>Linux 平台：阅读 <code>README-LINUX.md</code> </p>
-</div>
+            <p>下载后解压。</p>
+            <p>Windows 用户：运行 <code>windows-amd64/start_proxy.bat</code> 开启。（真不是 sing-box.exe）</p>
+            <p>Android 用户：安装 <code>android-arm64/SFA-${VERSION}-universal.apk</code>，导入配置文件 <code>android-arm64/trojan-tun-client.json</code>。</p>
+            <p>IOS/MacOS 用户：美区 AppStore 下载 sing-box，导入配置文件 <code>android-arm64/trojan-tun-client.json</code>。</p>
+            <p>Linux 用户：阅读 <code>linux-amd64/README-LINUX.md</code>。</p>
+        </div>
     </body>
 </html>
