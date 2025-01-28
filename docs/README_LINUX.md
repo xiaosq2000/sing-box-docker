@@ -1,10 +1,26 @@
 # README
 
-## 安装方法
-- 执行 `sudo ./install.sh --bash`
-- 执行 `source ~/.bashrc`
+## Installation
 
-## 使用方法
-- 开启代理：`set_proxy`
-- 关闭代理：`unset_proxy`
-- 查看当前的公网 IP：`check_public_ip`
+> [!NOTE]
+> You are recommended to check the script before executation.
+
+If you are using `bash`, execute
+
+```sh
+sudo ./install.sh --bash
+```
+
+If you are using `zsh`, execute
+
+```sh
+sudo ./install.sh --zsh
+```
+
+## Usage
+Enter a new shell, or execute `source ~/.[ba|z]shrc` in your current shell.
+
+- To enable proxy: `set_proxy`
+- To disable proxy: `unset_proxy`
+- `check_public_ip`
+- `check_proxy_status`
