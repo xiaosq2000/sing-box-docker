@@ -142,14 +142,15 @@ check_private_ip() {
 
 # Get proxy configuration based on platform
 get_proxy_config() {
-    if [[ $(uname -r) =~ WSL2 ]]; then
+    if [[ -f "/.dockerenv" ]]; then
+        # eval "$1=${DEFAULT_PROXY_HOST}"
+        eval "$1=host.docker.internal"
+        eval "$2=${DEFAULT_PROXY_PORT}"
+        warning "Inside a docker container. Only $RED\"bridge\"$RESET networking mode is supported."
+    elif [[ $(uname -r) =~ WSL2 ]]; then
         eval "$1=$(ip route show | grep -i default | awk '{ print $3}')"
         eval "$2=${DEFAULT_PROXY_PORT}"
         warning "$(translate 'Make sure the VPN client is working on host.')"
-    elif [[ -f /.dockerenv ]]; then
-        eval "$1=${DEFAULT_PROXY_HOST}"
-        eval "$2=${DEFAULT_PROXY_PORT}"
-        warning "$(translate "It's a docker container. only \"host\" networking mode is supported.")"
     elif [[ $(lsb_release -d 2>/dev/null) =~ Ubuntu ]]; then
         eval "$1=${DEFAULT_PROXY_HOST}"
         eval "$2=${DEFAULT_PROXY_PORT}"
@@ -198,15 +199,15 @@ set_proxy() {
 
     # Set environment variables
     debug "$(translate 'Set environment variables and configure for specific programs.')"
-    export http_proxy="${proxy_host}:${proxy_port}"
-    export https_proxy="${proxy_host}:${proxy_port}"
-    export ftp_proxy="${proxy_host}:${proxy_port}"
-    export socks_proxy="${proxy_host}:${proxy_port}"
-    export HTTP_PROXY="${proxy_host}:${proxy_port}"
-    export HTTPS_PROXY="${proxy_host}:${proxy_port}"
-    export FTP_PROXY="${proxy_host}:${proxy_port}"
-    export SOCKS_PROXY="${proxy_host}:${proxy_port}"
-    export no_proxy="localhost,127.0.0.0/8,::1"
+    export http_proxy="http://${proxy_host}:${proxy_port}"
+    export https_proxy="http://${proxy_host}:${proxy_port}"
+    export ftp_proxy="ftp://${proxy_host}:${proxy_port}"
+    export socks_proxy="socks5://${proxy_host}:${proxy_port}"
+    export HTTP_PROXY="http://${proxy_host}:${proxy_port}"
+    export HTTPS_PROXY="http://${proxy_host}:${proxy_port}"
+    export FTP_PROXY="ftp://${proxy_host}:${proxy_port}"
+    export SOCKS_PROXY="socks5://${proxy_host}:${proxy_port}"
+    export no_proxy="localhost,127.0.0.0/8,::1,host.docker.internal"
     export NO_PROXY="${no_proxy}"
 
     # Configure git proxy
