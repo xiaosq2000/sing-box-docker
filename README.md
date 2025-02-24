@@ -1,1 +1,1 @@
-# sing-box setup
+# sing-box-manager
