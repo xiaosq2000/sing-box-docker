@@ -83,6 +83,8 @@ class SecureStaticFiles(StaticFiles):
 # Mount the files directory with custom handler
 app.mount("/files", SecureStaticFiles(directory=release_files_dir), name="files")
 
+app.mount("/static", StaticFiles(directory="./static"), name="static")
+
 # Setup templates
 templates = Jinja2Templates(directory="./templates")
 
@@ -337,4 +339,3 @@ if __name__ == "__main__":
 
     # Use HTTPS in production
     uvicorn.run(app, host="0.0.0.0", port=web_port)
-

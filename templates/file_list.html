@@ -1,185 +1,157 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>List of files</title>
-        <style>
-            :root {
-                --base: #faf4ed;
-                --surface: #fffaf3;
-                --overlay: #f2e9e1;
-                --muted: #9893a5;
-                --subtle: #797593;
-                --text: #575279;
-                --love: #b4637a;
-                --gold: #ea9d34;
-                --rose: #d7827e;
-                --pine: #286983;
-                --foam: #56949f;
-                --iris: #907aa9;
-                --highlight-low: #f4ede8;
-                --highlight-med: #dfdad9;
-                --highlight-high: #cecacd;
-            }
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件列表</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
 
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: var(--base);
-                margin: 0;
-                min-height: 100vh;
-                padding: 2rem;
-            }
+        .file-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--highlight-med);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
 
-            .file-list {
-                max-width: 800px;
-                margin: 2rem auto;
-                background: var(--surface);
-                padding: 2.5rem;
-                border-radius: 15px;
-                box-shadow: 0 8px 32px rgba(87, 82, 121, 0.1);
-                backdrop-filter: blur(10px);
-                border: 1px solid var(--highlight-med);
-                animation: fadeIn 0.5s ease-in-out;
-            }
+        .file-item:last-child {
+            border-bottom: none;
+        }
 
-            .welcome-message {
-                color: var(--text);
-                text-align: center;
-                margin-bottom: 2rem;
-                animation: fadeIn 0.5s ease-in-out;
-            }
+        .file-item:hover {
+            background: var(--highlight-low);
+            transform: translateX(5px);
+        }
 
-            .welcome-message h1 {
-                font-size: 2rem;
-                margin-bottom: 0.5rem;
-                font-weight: 600;
-            }
+        .file-name {
+            font-weight: 500;
+            color: var(--text);
+            font-size: 1rem;
+        }
 
-            .welcome-message p {
-                font-size: 1.1rem;
-                opacity: 0.9;
-                margin: 0;
-            }
+        .instruction-section {
+            margin-top: 1.5rem;
+        }
 
-            h1 {
-                text-align: center;
-                margin-bottom: 2rem;
-                color: var(--text);
-                font-size: 1.8rem;
-                font-weight: 600;
-            }
+        .instruction-step {
+            margin-bottom: 1rem;
+        }
 
-            .file-item {
-                padding: 1rem 1.5rem;
-                border-bottom: 1px solid var(--highlight-med);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                transition: all 0.3s ease;
-            }
-
-            .file-item:last-child {
-                border-bottom: none;
-            }
-
-            .file-item:hover {
-                background: var(--highlight-low);
-                transform: translateX(5px);
-            }
-
-            .file-name {
-                font-weight: 500;
-                color: var(--text);
-                font-size: 1rem;
-            }
-
-            .file-download {
-                padding: 8px 16px;
-                background: var(--pine);
-                color: var(--surface);
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 0.9rem;
-                font-weight: 500;
-                text-decoration: none;
-                transition: all 0.3s ease;
-            }
-
-            .file-download:hover {
-                background: var(--foam);
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(86, 148, 159, 0.2);
-            }
-
-            code {
-                background: var(--highlight-low);
-                padding: 0.2em 0.4em;
-                border-radius: 4px;
-                font-family: 'Consolas', 'Monaco', monospace;
-                color: var(--pine);
-            }
-
-            p {
-                color: var(--text);
-                line-height: 1.6;
-                margin: 0.75rem 0;
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(-20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            @media (max-width: 768px) {
-                body {
-                    padding: 1rem;
-                }
-
-                .file-list {
-                    margin: 1rem auto;
-                    padding: 1.5rem;
-                }
-
-                .welcome-message h1 {
-                    font-size: 1.5rem;
-                }
-
-                .welcome-message p {
-                    font-size: 1rem;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <!-- 
-        <div class="welcome-message">
-            <h1>欢迎回来！</h1>
-            <p>您可以在这里查看和下载所有文件</p>
-        </div>
-        -->
-        
-        <div class="file-list">
-            <h1>文件列表</h1>
+        .card-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+    <button id="themeToggle" class="theme-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-light">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <span class="theme-text">切换深色</span>
+    </button>
+    
+    <div class="container">
+        <h1>文件列表</h1>
+        {% if files %}
             {% for file in files %}
             <div class="file-item">
                 <span class="file-name">{{ file.name }}</span>
-                <a class="file-download" href="/files/{{ file.name }}" download>下载</a>
+                <a class="btn" href="/files/{{ file.name }}" download>下载</a>
             </div>
             {% endfor %}
+        {% else %}
+            <p class="text-center">暂无可用文件</p>
+        {% endif %}
+        <div class="card-footer">
+            <p>sing-box v1.10.7</p>
         </div>
-        <div class="file-list">
-            <h1>使用方法</h1>
-            <p>下载后解压。</p>
-            <p>Windows 用户：运行 <code>windows-amd64/start_proxy.bat</code> 开启。（真不是 sing-box.exe）</p>
-            <p>Android 用户：安装 <code>android-arm64/SFA-${VERSION}-universal.apk</code>，导入配置文件 <code>android-arm64/trojan-tun-client.json</code>。</p>
-            <p>IOS/MacOS 用户：美区 AppStore 下载 sing-box，导入配置文件 <code>android-arm64/trojan-tun-client.json</code>。</p>
-            <p>Linux 用户：阅读 <code>linux-amd64/README-LINUX.md</code>。</p>
+    </div>
+
+<div class="container">
+    <h1>使用指南</h1>
+    <div class="instruction-cards">
+        <div class="instruction-card">
+            <div class="instruction-icon">📦</div>
+            <h3>准备工作</h3>
+            <p>下载文件后解压到本地文件夹</p>
         </div>
-    </body>
+        
+        <div class="instruction-card">
+            <div class="instruction-icon">💻</div>
+            <h3>Windows</h3>
+            <p>运行 <code>windows-amd64/start_proxy.bat</code> 启动服务</p>
+            <p class="note">注意：不要直接运行 <code>sing-box.exe</code></p>
+        </div>
+
+        <div class="instruction-card">
+            <div class="instruction-icon">📱</div>
+            <h3>Android</h3>
+            <p>安装 <code>android-arm64/SFA-${VERSION}-universal.apk</code></p>
+            <p>导入配置: <code>android-arm64/trojan-tun-client.json</code></p>
+        </div>
+
+        <div class="instruction-card">
+            <div class="instruction-icon">🍎</div>
+            <h3>iOS / macOS</h3>
+            <p>美区 App Store 下载 sing-box 应用</p>
+            <p>导入配置: <code>android-arm64/trojan-tun-client.json</code></p>
+        </div>
+
+        <div class="instruction-card">
+            <div class="instruction-icon">🐧</div>
+            <h3>Linux</h3>
+            <p>详细说明请查看: <code>linux-amd64/README-LINUX.md</code></p>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // Theme switcher
+        const themeToggle = document.getElementById('themeToggle');
+        const themeText = document.querySelector('.theme-text');
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        // Check for saved theme or use system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeText.textContent = '切换浅色';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            themeText.textContent = '切换深色';
+        }
+        
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                themeText.textContent = '切换深色';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeText.textContent = '切换浅色';
+            }
+        });
+    </script>
+</body>
 </html>

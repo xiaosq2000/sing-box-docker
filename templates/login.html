@@ -1,35 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="/static/styles.css">
     <style>
-        :root {
-            --base: #faf4ed;
-            --surface: #fffaf3;
-            --overlay: #f2e9e1;
-            --muted: #9893a5;
-            --subtle: #797593;
-            --text: #575279;
-            --love: #b4637a;
-            --gold: #ea9d34;
-            --rose: #d7827e;
-            --pine: #286983;
-            --foam: #56949f;
-            --iris: #907aa9;
-            --highlight-low: #f4ede8;
-            --highlight-med: #dfdad9;
-            --highlight-high: #cecacd;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-
         body.login-page {
-            background: var(--base);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -37,101 +14,36 @@
         }
 
         .login-box {
-            background: var(--surface);
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(87, 82, 121, 0.1);
             width: 350px;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--highlight-med);
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .login-box h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--text);
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--subtle);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .form-input {
-            width: 90%;
             margin: 0 auto;
-            padding: 12px 15px;
-            border: 1px solid var(--highlight-med);
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            display: block;
-            background: var(--surface);
-            color: var(--text);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--foam);
-            box-shadow: 0 0 0 3px rgba(86, 148, 159, 0.1);
         }
 
         .btn-primary {
-            width: 300px;
+            width: 100%;
             padding: 12px;
-            background: var(--pine);
-            color: var(--surface);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
             font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s ease;
             margin: 0.5rem auto 0;
             display: block;
-        }
-
-        .btn-primary:hover {
-            background: var(--foam);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(86, 148, 159, 0.2);
-        }
-
-        .error {
-            color: var(--love);
-            margin-bottom: 1.2rem;
-            text-align: center;
-            font-size: 14px;
-            padding: 10px;
-            background: rgba(180, 99, 122, 0.1);
-            border-radius: 6px;
-            border: 1px solid rgba(180, 99, 122, 0.2);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
     </style>
 </head>
 <body class="login-page">
-    <div class="login-box">
+    <button id="themeToggle" class="theme-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-light">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <span class="theme-text">切换深色</span>
+    </button>
+
+    <div class="container login-box">
         <h2>身份验证</h2>
         {% if error %}
         <div class="error">{{ error }}</div>
@@ -145,8 +57,39 @@
                 <label for="password">密码</label>
                 <input type="password" id="password" name="password" placeholder="请输入密码" required class="form-input">
             </div>
-            <button type="submit" class="btn-primary">验证</button>
+            <button type="submit" class="btn btn-primary">验证</button>
         </form>
     </div>
+
+    <script>
+        // Theme switcher
+        const themeToggle = document.getElementById('themeToggle');
+        const themeText = document.querySelector('.theme-text');
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        // Check for saved theme or use system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeText.textContent = '切换浅色';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            themeText.textContent = '切换深色';
+        }
+        
+        // Theme toggle functionality
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                themeText.textContent = '切换深色';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeText.textContent = '切换浅色';
+            }
+        });
+    </script>
 </body>
 </html>
