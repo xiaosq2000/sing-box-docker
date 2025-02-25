@@ -33,6 +33,7 @@ else:
 sing_box_version = str(env.get("SING_BOX_VERSION"))
 config_git_repo = str(env.get("CONFIG_GIT_REPO"))
 config_git_hash = str(env.get("CONFIG_GIT_HASH"))
+web_port = str(env.get("WEB_PORT"))
 
 release_files_dir = Path(f"./releases/sing-box-v{sing_box_version}-{config_git_hash}")
 
@@ -55,6 +56,7 @@ templates = Jinja2Templates(directory="./templates")
 security = HTTPBasic()
 
 
+# TODO
 def load_users():
     try:
         with open(
@@ -173,4 +175,4 @@ if __name__ == "__main__":
         logger.warning("No users loaded! Authentication will fail for all requests.")
     else:
         logger.info(f"Loaded {len(USERS)} users successfully")
-    uvicorn.run(app, host="0.0.0.0", port=7070)
+    uvicorn.run(app, host="0.0.0.0", port=web_port)
