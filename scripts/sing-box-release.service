@@ -6,7 +6,7 @@ After=network.target
 User=shuqixiao
 Group=shuqixiao
 WorkingDirectory=/home/shuqixiao/Projects/sing-box-docker
-ExecStart=/bin/bash -c 'source /home/shuqixiao/Projects/sing-box-docker/venv/bin/activate && /home/shuqixiao/Projects/sing-box-docker/venv/bin/python /home/shuqixiao/Projects/sing-box-docker/auth_service.py'
+ExecStart=/home/shuqixiao/.local/bin/uv run /home/shuqixiao/Projects/sing-box-docker/auth_service.py
 Restart=always
 RestartSec=10
 Environment=PYTHONUNBUFFERED=1

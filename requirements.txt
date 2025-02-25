@@ -1,7 +1,0 @@
-python-dotenv
-tqdm
-
-fastapi
-uvicorn
-python-multipart
-jinja2
