@@ -2,8 +2,12 @@
 
 ## Installation
 
-> [!NOTE]
-> You are recommended to check the script before executation.
+> [!TIP]
+> It's a dangerous world. You are recommended to check the script before executation.
+>
+> If you believe in me, `./install.sh` will
+> 1. Install a systemd service. (why `sudo` is required)
+> 2. Add some handy shell functions by appending a line to your `~/.bashrc` or `~/.zshrc`. 
 
 If you are using `bash`, execute
 
@@ -18,9 +22,22 @@ sudo ./install.sh --zsh
 ```
 
 ## Usage
-Enter a new shell, or execute `source ~/.[ba|z]shrc` in your current shell.
 
-- To enable proxy: `set_proxy`
-- To disable proxy: `unset_proxy`
-- `check_public_ip`
-- `check_proxy_status`
+Open a new shell or source your shell's rc-file.
+
+- To enable proxy:
+    ```sh
+    set_proxy
+    ```
+- To disable proxy:
+    ```sh
+    unset_proxy
+    ````
+- To check public ip
+    ```sh
+    check_public_ip
+    ```
+- To check proxy status
+    ```sh
+    check_proxy_status
+    ```
