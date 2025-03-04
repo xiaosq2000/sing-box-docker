@@ -1,9 +1,13 @@
 # sing-box-manager
 
-Deploy, package and distribute sing-box for personal use.
+Deploy, package and distribute [sing-box](https://github.com/SagerNet/sing-box).
+
+> [!CAUTION]
+> This is for personal usage only.
 
 ## Configuration
 
+Example `.env`:
 ```sh
 SING_BOX_VERSION=1.10.7
 
